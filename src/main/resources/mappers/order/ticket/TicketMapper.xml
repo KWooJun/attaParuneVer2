@@ -6,9 +6,8 @@
     <insert id="postTicket" useGeneratedKeys="true" keyProperty="ticketId">
         INSERT INTO ticket
         SET order_id = #{orderId}
-        , expired_date = #{expiredDate}
-        , qr_code = #{qrCode}
         , point = #{point}
+        , created_at = #{createdAt}
     </insert>
 
     <select id="getUserPoint">

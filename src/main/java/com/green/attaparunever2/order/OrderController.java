@@ -65,7 +65,7 @@ public class OrderController {
         long orderDetailId = service.postOrderDetail(p);
         return ResultResponse.<Long>builder()
                 .statusCode("200")
-                .resultMsg("주문 상세 정보 등록 완료")
+                .resultMsg("주문 상세 정보 등록 및 식권 생성 완료")
                 .resultData(orderDetailId)
                 .build();
     }

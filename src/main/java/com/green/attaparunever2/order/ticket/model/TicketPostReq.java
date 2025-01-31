@@ -22,6 +22,6 @@ public class TicketPostReq {
     @Schema(title = "사용자 포인트")
     private int point;
 
-    @Schema(title = "주문 생성일")
+    @Schema(title = "식권 생성일")
     private String createdAt;
 }

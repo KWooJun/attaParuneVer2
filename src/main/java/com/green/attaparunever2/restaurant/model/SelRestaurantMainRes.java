@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SelRestaurantAroundRes {
+public class SelRestaurantMainRes {
     @Schema(title = "식당 PK")
     private long restaurantId;
     @Schema(title = "식당 이름")
@@ -21,5 +21,5 @@ public class SelRestaurantAroundRes {
     @Schema(title = "식당 평균 식사 시간")
     private double avgRestaurant;
     @Schema(title = "식당 사진 리스트")
-    private List<RestaurantPicAroundSel> restaurantArroundPicList;
+    private RestaurantPicAroundSel restaurantAroundPicList;
 }

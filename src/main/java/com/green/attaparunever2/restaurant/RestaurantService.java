@@ -4,6 +4,13 @@ package com.green.attaparunever2.restaurant;
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.restaurant.model.*;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuMapper;
+import com.green.attaparunever2.restaurant.restaurant_menu.model.MenuSelCateList;
+import com.green.attaparunever2.restaurant.restaurant_menu.model.MenuSelList;
+import com.green.attaparunever2.restaurant.restaurant_pic.RestaurantPicMapper;
+import com.green.attaparunever2.restaurant.restaurant_pic.model.RestaurantPicAroundSel;
+import com.green.attaparunever2.restaurant.restaurant_pic.model.RestaurantPicSel;
+import com.green.attaparunever2.restaurant.restaurant_pic.model.UpdRestaurantMenuPicReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +28,7 @@ import java.util.List;
 public class RestaurantService {
     private final RestaurantMapper restaurantMapper;
     private final RestaurantPicMapper restaurantPicMapper;
+    private final RestaurantMenuMapper restaurantMenuMapper;
     private final MyFileUtils myFileUtils;
 
     @Transactional
@@ -62,7 +70,22 @@ public class RestaurantService {
     }
 
     public SelRestaurantRes getRestaurant(SelRestaurantReq p){
-        SelRestaurantRes res = restaurantMapper.selRestaurantOne(p);
+        // 식당 정보 불러오기
+        SelRestaurantRes res = restaurantMapper.selRestaurant(p);
+        // 식당 사진 불러오기
+        RestaurantPicSel restaurantPicSel = restaurantPicMapper.selRestaurantPic(p.getRestaurantId());
+        res.setRestaurantPics(restaurantPicSel);
+        // 식당 메뉴 카테고리 불러오기
+        List<MenuSelCateList> menuSelCateList = restaurantMenuMapper.selMenuCategoryList(p.getRestaurantId());
+        res.setMenuCateList(menuSelCateList);
+        // 식당 메뉴 불러오기
+        for (MenuSelCateList category : menuSelCateList) {
+            // 4.1 각 카테고리 ID를 사용하여 해당 카테고리의 메뉴를 조회
+            List<MenuSelList> menuList = restaurantMenuMapper.selMenuList(category.getCategoryId());
+
+            // 4.2 카테고리 객체에 메뉴 리스트 설정
+            category.setMenuList(menuList);
+        }
         return res;
     }
 
@@ -97,10 +120,19 @@ public class RestaurantService {
 
         log.info("오더 필터 : {} 검색 필터 {}", p.getOrderFilter(), p.getSearchFilter());
 
-        List<SelRestaurantAroundRes> res = restaurantMapper.selRestaurantAround(p);
+        List<SelRestaurantAroundRes> list = restaurantMapper.selRestaurantAround(p);
+        for (SelRestaurantAroundRes res : list) {
+            // 각 식당에 대해 사진 리스트를 가져오기
+            List<RestaurantPicAroundSel> picList = restaurantPicMapper.selRestaurantAroundPic(res.getRestaurantId());
 
-        return res;
+            // 사진 리스트를 해당 식당 객체에 설정
+            res.setRestaurantArroundPicList(picList);
 
+            log.info("qwer : {} pic : {}", res.getRestaurantId(), res.getRestaurantArroundPicList());
+        }
+
+        // 3. 최종적으로 수정된 식당 목록 반환
+        return list;
     }
 
 
@@ -116,9 +148,9 @@ public class RestaurantService {
         return res;
     }
 
+    @Transactional
     public int patchRestaurant(UpdRestaurantReq req) {
         int result = restaurantMapper.updRestaurant(req);
-
         if (result == 0) {
             throw new CustomException("식당 수정에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
@@ -132,5 +164,16 @@ public class RestaurantService {
             throw new CustomException("휴무일 수정에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
         return result;
+    }
+
+    public List<SelRestaurantMainRes> getRestaurantMain(SelRestaurantMainReq p){
+        // 식당 정보 불러오기
+        List<SelRestaurantMainRes> res = restaurantMapper.selRestaurantMain(p);
+        // 식당 사진 불러오기
+        for (SelRestaurantMainRes item : res) {
+            RestaurantPicAroundSel picList = restaurantPicMapper.selRestaurantMainPic(item.getRestaurantId());
+            item.setRestaurantAroundPicList(picList);
+        }
+        return res;
     }
 }

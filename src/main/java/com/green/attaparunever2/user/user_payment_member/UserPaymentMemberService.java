@@ -65,6 +65,7 @@ public class UserPaymentMemberService {
             throw new CustomException(msg, HttpStatus.BAD_REQUEST);
         }
 
+
         return result;
     }
 

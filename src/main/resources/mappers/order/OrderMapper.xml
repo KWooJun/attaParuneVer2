@@ -8,8 +8,6 @@
         INSERT INTO `order`
         SET user_id = #{userId}
         , restaurant_id = #{restaurantId}
-        , reservation_yn = #{reservationYn}
-        , reservation_status = #{reservationStatus}
     </insert>
 
     <insert id="postOrderDetail" useGeneratedKeys="true" keyProperty="orderDetailId">

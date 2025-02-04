@@ -58,8 +58,8 @@ public class ReservationService {
 
         orderData.setUserId(req.getUserId());
         orderData.setRestaurantId(req.getRestaurantId());
-        orderData.setReservationYn(1);
-        orderData.setReservationStatus(0);
+//        orderData.setReservationYn(1);
+//        orderData.setReservationStatus(0);
 
         int result = orderService.postOrder(orderData);
 

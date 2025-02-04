@@ -19,14 +19,9 @@ public class TicketPostReq {
     @Schema(title = "주문 PK", requiredMode = Schema.RequiredMode.REQUIRED)
     private long orderId;
 
-    @NotNull
-    @Schema(title = "만료 시간", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String expiredDate;
-
-    @NotNull
-    @Schema(title = "QR 코드", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String qrCode;
-
     @Schema(title = "사용자 포인트")
     private int point;
+
+    @Schema(title = "식권 생성일")
+    private String createdAt;
 }

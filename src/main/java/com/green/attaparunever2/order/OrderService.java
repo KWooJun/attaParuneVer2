@@ -6,6 +6,9 @@ import com.green.attaparunever2.order.ticket.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,20 @@ public class OrderService {
 
     public int postOrderDetail(OrderDetailPostReq p) {
         return mapper.postOrderDetail(p);
+    }
+
+    @Transactional
+    public int postOrderWithDetail(OrderPostReq orderReq) {
+        mapper.postOrder(orderReq);
+
+        int totalPrice = 0;
+        for (OrderDetailPostReq detailReq : orderReq.getOrderDetails()) {
+            detailReq.setOrderId(orderReq.getOrderId());
+            int itemPrice = detailReq.getMenuCount() * detailReq.getPrice();
+            totalPrice += itemPrice;
+            mapper.postOrderDetail(detailReq);
+        }
+        return totalPrice;
     }
 
     public int updOrderAccess(OrderAccessPatchReq p) {

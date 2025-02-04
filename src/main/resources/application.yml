@@ -25,18 +25,14 @@ const:
 
 #?????? ??
 spring:
-
   application:
     name: attaParuneVer2
-
   config:
     import: "classpath:application-secret.yml"
-
   #File ??? ??
   servlet:
     multipart:
       max-file-size: 50MB
-
 #MyBatis ??
 mybatis:
   mapper-locations: mappers/**/*.xml

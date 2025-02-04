@@ -20,25 +20,25 @@ public class OrderController {
     private final OrderService service;
     private final TicketService ticketService;
 
-    @PostMapping
-    @Operation(summary = "주문 등록")
-    public ResultResponse<Long> postOrder(@Valid @RequestBody OrderPostReq p
-            , BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResultResponse.<Long>builder()
-                    .statusCode("400")
-                    .resultMsg("주문 등록 실패")
-                    .resultData(0L)
-                    .build();
-        }
-
-        long result = service.postOrder(p);
-        return ResultResponse.<Long>builder()
-                .statusCode("200")
-                .resultMsg("주문 등록 완료")
-                .resultData(result)
-                .build();
-    }
+//    @PostMapping
+//    @Operation(summary = "주문 등록")
+//    public ResultResponse<Long> postOrder(@Valid @RequestBody OrderPostReq p
+//            , BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            return ResultResponse.<Long>builder()
+//                    .statusCode("400")
+//                    .resultMsg("주문 등록 실패")
+//                    .resultData(0L)
+//                    .build();
+//        }
+//
+//        long result = service.postOrder(p);
+//        return ResultResponse.<Long>builder()
+//                .statusCode("200")
+//                .resultMsg("주문 등록 완료")
+//                .resultData(result)
+//                .build();
+//    }
 
     @GetMapping
     @Operation(summary = "주문 조회")
@@ -51,24 +51,45 @@ public class OrderController {
                 .build();
     }
 
-    @PostMapping("/detail")
-    @Operation(summary = "주문 상세 정보 등록")
-    public ResultResponse<Long> postOrderDetail(@Valid @RequestBody OrderDetailPostReq p, BindingResult bindingResult) {
+//    @PostMapping("/detail")
+//    @Operation(summary = "주문 상세 정보 등록")
+//    public ResultResponse<Long> postOrderDetail(@Valid @RequestBody OrderDetailPostReq p, BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            return ResultResponse.<Long>builder()
+//                    .statusCode("400")
+//                    .resultMsg("주문 상세 정보 등록 실패")
+//                    .resultData(0L)
+//                    .build();
+//        }
+//
+//        long orderDetailId = service.postOrderDetail(p);
+//        return ResultResponse.<Long>builder()
+//                .statusCode("200")
+//                .resultMsg("주문 상세 정보 등록 및 식권 생성 완료")
+//                .resultData(orderDetailId)
+//                .build();
+//    }
+
+    @PostMapping("/with-detail")
+    @Operation(summary = "주문 정보 등록")
+    public ResultResponse<Integer> postOrderWithDetail(@Valid @RequestBody OrderPostReq orderReq, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResultResponse.<Long>builder()
+            return ResultResponse.<Integer>builder()
                     .statusCode("400")
-                    .resultMsg("주문 상세 정보 등록 실패")
-                    .resultData(0L)
+                    .resultMsg("주문 정보 등록 실패")
+                    .resultData(0)
                     .build();
         }
 
-        long orderDetailId = service.postOrderDetail(p);
-        return ResultResponse.<Long>builder()
+        int totalPrice = service.postOrderWithDetail(orderReq);
+        return ResultResponse.<Integer>builder()
                 .statusCode("200")
-                .resultMsg("주문 상세 정보 등록 및 식권 생성 완료")
-                .resultData(orderDetailId)
+                .resultMsg("주문 정보 등록 완료")
+                .resultData(totalPrice)
                 .build();
     }
+
+
 
     @PutMapping("/access")
     @Operation(summary = "주문 상태 변경", description = "0:미승인, 1:승인, 2:거부, 3:취소")

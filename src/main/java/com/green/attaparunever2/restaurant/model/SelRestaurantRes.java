@@ -17,6 +17,8 @@ public class SelRestaurantRes {
     private long adminId;
     @Schema(title = "카테고리 PK")
     private long categoryId;
+    @Schema(title = "식당 PK")
+    private long restaurantId;
     @Schema(title = "식당 이름")
     private String restaurantName;
     @Schema(title = "식당 주소")
@@ -33,10 +35,6 @@ public class SelRestaurantRes {
     private int status;
     @Schema(title = "식당 인원 수용량")
     private int maxCapacity;
-    @Schema(title = "위도")
-    private double lat;
-    @Schema(title = "경도")
-    private double lng;
     @Schema(title = "생성 시간")
     private String createdAt;
     @Schema(title = "식당 사진 리스트")

@@ -12,6 +12,7 @@ public class OrderDetailPostReq {
     @JsonIgnore
     private long orderDetailId;
 
+    @JsonIgnore
     @Schema(title = "주문 PK")
     private long orderId;
 

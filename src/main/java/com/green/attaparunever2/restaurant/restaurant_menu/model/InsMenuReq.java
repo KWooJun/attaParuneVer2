@@ -15,7 +15,7 @@ public class InsMenuReq {
     private long categoryId;
     @Schema(title = "메뉴 이름", example = "김치찌개")
     private String menuName;
-    @Schema(title = "메뉴 사진")
+    @JsonIgnore
     private String menuPic;
     @Schema(title = "메뉴 가격", example = "8000")
     private int price;

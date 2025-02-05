@@ -103,6 +103,8 @@ public class ReservationService {
             // 생성된 예약 정보 가져옴(소켓 통신으로 보내줌.)
             ReservationDto createdReservationDto = reservationMapper.selReservationByReservationId(reservationInsDto.getReservationId());
 
+            req.setOrderId(createdOrderId);
+
             // 사장님 구독 경로로 예약 알림 메시지 전송
             messagingTemplate.convertAndSend(
                     "/queue/restaurant/" + req.getRestaurantId() + "/owner/reservation",

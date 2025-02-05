@@ -16,4 +16,8 @@ public interface UserPaymentMemberMapper {
     int postPaymentMember(List<PostPaymentUserIdAndPoint> p); //결제 승인 요청 등록
     List<UserPaymentMemberDto> selUserPaymentMemberByOrderId(long orderId);
     UserPaymentMemberDto selUserPaymentMemberByOrderIdAndUserId(UserGetPaymentInfoReq req);
+    List<SelUserOrderApprovalRes> selUserOrderApprovalAccess(long orderId);
+    int insTicket(long orderId);
+    int updUserPoint(int point, long userId);
+    int sumMenuPrice(long orderId);
 }

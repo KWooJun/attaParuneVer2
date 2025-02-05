@@ -75,6 +75,47 @@ public class UserPaymentMemberService {
         return result;
     }
 
+    //승인 상태 확인
+    public List<SelUserOrderApprovalRes> getUserOrderApprovalAccess(long orderId){
+        List<SelUserOrderApprovalRes> userOrderApprovalList = userPaymentMemberMapper.selUserOrderApprovalAccess(orderId);
+        return userOrderApprovalList;
+    }
+
+    //결제요청(티켓 생성)
+    public int postTicket(long orderId){
+        // 1.오더 아이디에 포함된 사용자들이 전부 승인을 했는지 여부
+        List<SelUserOrderApprovalRes> list = userPaymentMemberMapper.selUserOrderApprovalAccess(orderId);
+
+        int sumMenuPrice = userPaymentMemberMapper.sumMenuPrice(orderId);
+        int sumUserPoint = 0;
+        for(SelUserOrderApprovalRes item : list) {
+            if (item.getApprovalStatus() != 1) {
+                throw new CustomException("모두 승인이 되어있지않습니다.", HttpStatus.BAD_REQUEST);
+            }
+            // 2. 포인트가 사용자에게 실제로 있는지
+            if(item.getPoint() > item.getUserPoint()) {
+                throw new CustomException("승인할 금액이 부족합니다.", HttpStatus.BAD_REQUEST);
+            }
+            sumUserPoint += item.getPoint();
+        }
+
+        log.info("sumMenuPrice : {}, sumUserPoint : {}", sumMenuPrice, sumUserPoint);
+        if(sumMenuPrice != sumUserPoint) {
+            throw new CustomException("금액이 정확하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+
+        for (SelUserOrderApprovalRes item : list) {
+            log.info("userPoint : {}, itemPoint {}", item.getUserPoint(), item.getPoint());
+
+            userPaymentMemberMapper.updUserPoint(item.getPoint(), item.getUserId());
+        }
+        int result = userPaymentMemberMapper.insTicket(orderId);
+
+        return result;
+    }
+
+
     //결제 인원 조회
     public int getPaymentMember(long orderId) {
         int targetCnt = 0;

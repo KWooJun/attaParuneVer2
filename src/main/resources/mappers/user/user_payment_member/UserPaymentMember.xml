@@ -87,4 +87,39 @@
         AND user_id = #{userId}
     </select>
 
+    <select id="selUserOrderApprovalAccess">
+        SELECT B.name, B.uid, A.approval_status AS approvalStatus, A.`point`, A.user_id AS userId, B.`point` AS userPoint
+        FROM user_payment_member A
+        INNER JOIN user B
+        ON A.user_id = B.user_id
+        WHERE A.order_id = #{order_id};
+    </select>
+
+    <update id="updUserPoint">
+        UPDATE `user`
+        SET `point` = `point` - #{userPoint}
+        WHERE user_id = #{userId};
+    </update>
+
+    <select id="sumMenuPrice">
+        SELECT SUM(B.price * B.menu_count) AS MenuPrice
+        FROM `order` A
+        INNER JOIN order_detail B
+        ON A.order_id = B.order_id
+        WHERE B.order_id = 1;
+    </select>
+
+    <insert id="insTicket">
+        INSERT INTO ticket
+        SET order_id = #{orderId}
+        , expired_date = DATE_ADD(
+        IFNULL ((
+        SELECT B.reservation_time
+        FROM `order` A
+        INNER JOIN reservation B
+        ON A.order_id = B.order_id
+        WHERE A.order_id = #{orderId}
+        ), NOW()), INTERVAL 2 HOUR);
+    </insert>
+
 </mapper>

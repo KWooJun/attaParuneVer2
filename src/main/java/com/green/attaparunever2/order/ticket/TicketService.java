@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketMapper mapper;
+    private final TicketMapper ticketMapper;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 
@@ -59,4 +60,9 @@ public class TicketService {
         return res;
     }
 
+    public int updTicket(long ticketId) {
+        int result = ticketMapper.updTicket(ticketId);
+
+        return result;
+    }
 }

@@ -58,4 +58,10 @@
         WHERE order_id = #{orderId}
     </select>
 
+    <update id="updTicket">
+        UPDATE ticket
+        SET ticket_status = 1
+        WHERE ticket_id = #{ticketId}
+    </update>
+    
 </mapper>

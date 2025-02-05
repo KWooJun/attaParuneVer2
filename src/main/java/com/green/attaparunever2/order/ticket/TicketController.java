@@ -61,4 +61,15 @@ public class TicketController {
                 .build();
     }
 
+    @PatchMapping
+    @Operation(summary = "식권 사용 여부 변경", description = "식권 사용 완료 처리")
+    public ResultResponse<Integer> patchTicket(@RequestParam long ticketId) {
+        int result = service.updTicket(ticketId);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("식권 사용 완료")
+                .resultData(result)
+                .build();
+    }
 }

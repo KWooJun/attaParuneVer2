@@ -1,6 +1,7 @@
 package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.user.model.UserSignInRes;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
@@ -72,6 +73,9 @@ public class UserPaymentMemberService {
             throw new CustomException(msg, HttpStatus.BAD_REQUEST);
         }
 
+
+
+
         return result;
     }
 
@@ -116,19 +120,52 @@ public class UserPaymentMemberService {
     }
 
 
-    //결제 인원 조회
-    public int getPaymentMember(long orderId) {
-        int targetCnt = 0;
-        try {
-            targetCnt = userPaymentMemberMapper.getPaymentMember(orderId);
+//    //결제 인원 조회
+//    public int getPaymentMember(long orderId) {
+//        int targetCnt = 0;
+//        try {
+//            targetCnt = userPaymentMemberMapper.getPaymentMember(orderId);
+//
+//        } catch (Exception e) {
+//            String msg = "결제 인원 조회시 에러가 발생하였습니다.";
+//            throw new CustomException(msg, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        return targetCnt;
+//    }
 
-        } catch (Exception e) {
-            String msg = "결제 인원 조회시 에러가 발생하였습니다.";
-            throw new CustomException(msg, HttpStatus.BAD_REQUEST);
+    //결제 인원 조회 >> 수정
+    public UserPaymentMemberGetRes getPaymentMemberByName(long companyId, String name) {
+
+        Paging paging = new Paging(1, 20);
+
+//        UserPaymentMemberGetRes res = new UserPaymentMemberGetRes();
+//        List<UserPaymentMemberDto> memberList = mapper.getPaymentMemberByName(companyId, name, paging.getStartIdx(), paging.getSize());
+//        res.setMemberList(memberList);
+
+        List<PaymentMemberDto> member = userPaymentMemberMapper.getPaymentMemberByName(companyId, name, 0, Integer.MAX_VALUE);
+
+        UserPaymentMemberGetRes res = new UserPaymentMemberGetRes();
+
+        if (member.size() <= 20) {
+            res.setMemberList(member);
+        } else {
+            List<PaymentMemberDto> memberList = userPaymentMemberMapper.getPaymentMemberByName(companyId, name, paging.getStartIdx(), paging.getSize());
+            res.setMemberList(memberList);
         }
-
-        return targetCnt;
+        return res;
     }
+
+
+    public int updPaymentAmount(UserPaymentAmountPatchReq p) {
+        return userPaymentMemberMapper.updPaymentAmount(p);
+    }
+
+    public int deletePaymentMember(UserPaymentMemberDelReq p) {
+        return userPaymentMemberMapper.deletePaymentMember(p);
+    }
+
+
 
     //내게 온 결제 승인요청 정보조회
     public UserGetPaymentInfoRes getPaymentInfo(UserGetPaymentInfoReq p) {

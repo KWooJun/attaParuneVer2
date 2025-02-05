@@ -8,8 +8,6 @@
         INSERT INTO `order`
         SET user_id = #{userId}
         , restaurant_id = #{restaurantId}
-        , reservation_yn = #{reservationYn}
-        , reservation_status = #{reservationStatus}
     </insert>
 
     <insert id="postOrderDetail" useGeneratedKeys="true" keyProperty="orderDetailId">
@@ -19,6 +17,14 @@
         menu_count = #{menuCount},
         price = (SELECT price FROM restaurant_menu WHERE menu_id = #{menuId})
     </insert>
+
+    <select id="getTotalPrice">
+        SELECT A.menu_count, A.price
+        FROM order_detail A
+        JOIN restaurant_menu B
+        ON A.menu_id = B.menu_id
+        WHERE A.order_id = #{orderId}
+    </select>
 
     <select id="getOrder">
         SELECT

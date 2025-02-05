@@ -6,8 +6,10 @@ import com.green.attaparunever2.user.model.*;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,15 +47,66 @@ public class UserPaymentMemberController {
                 .build();
     }
 
-    @GetMapping("getPaymentMember")
-    @Operation(summary = "결제에 해당하는 인원을 조회한다.")
-    public ResultResponse<Integer> getPaymentMember(@ModelAttribute UserGetPaymentMemberReq p) {
-        int result = userPaymentMemberService.getPaymentMember(p.getOrderId());
+//    @GetMapping("getPaymentMember")
+//    @Operation(summary = "결제에 해당하는 인원을 조회한다.")
+//    public ResultResponse<Integer> getPaymentMember(@ModelAttribute UserGetPaymentMemberReq p) {
+//        int result = userPaymentMemberService.getPaymentMember(p.getOrderId());
+//
+//        return ResultResponse.<Integer>builder()
+//                .statusCode(HttpStatus.OK.toString())
+//                .resultMsg("포인트 조회 완료.")
+//                .resultData(result)
+//                .build();
+//    }
+
+    @GetMapping("searchPeople")
+    @Operation(summary = "결제 인원 검색")
+    public ResultResponse<UserPaymentMemberGetRes> getPaymentMemberByName(@ParameterObject @Valid long companyId
+            , String name, @RequestParam(defaultValue = "1") int page) {
+
+        UserPaymentMemberGetRes res = userPaymentMemberService.getPaymentMemberByName(companyId, name);
+        return ResultResponse.<UserPaymentMemberGetRes>builder()
+                .statusCode("200")
+                .resultMsg("결제 인원 검색 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @PatchMapping("updAmount")
+    @Operation(summary = "승인 요청 금액 수정")
+    public ResultResponse<Integer> updPaymentAmount(UserPaymentAmountPatchReq p) {
+        int result = userPaymentMemberService.updPaymentAmount(p);
+        if (result == 0) {
+            return ResultResponse.<Integer>builder()
+                    .statusCode("400")
+                    .resultMsg("금액 수정 실패")
+                    .resultData(0)
+                    .build();
+        }
 
         return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("포인트 조회 완료.")
-                .resultData(result)
+                .statusCode("200")
+                .resultMsg("금액 수정 완료")
+                .resultData(1)
+                .build();
+    }
+
+    @DeleteMapping
+    @Operation(summary = "결제 인원 삭제")
+    public ResultResponse<Integer> deletePaymentMember(UserPaymentMemberDelReq p) {
+        int result = userPaymentMemberService.deletePaymentMember(p);
+        if (result == 0) {
+            return ResultResponse.<Integer>builder()
+                    .statusCode("400")
+                    .resultMsg("결제 인원 삭제 실패")
+                    .resultData(0)
+                    .build();
+        }
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("결제 인원 삭제 완료")
+                .resultData(1)
                 .build();
     }
 

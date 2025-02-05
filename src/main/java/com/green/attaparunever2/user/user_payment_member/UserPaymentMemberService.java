@@ -3,9 +3,11 @@ package com.green.attaparunever2.user.user_payment_member;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.user.model.UserSignInRes;
 import com.green.attaparunever2.user.user_payment_member.model.*;
+import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserPaymentMemberService {
     private final UserPaymentMemberMapper userPaymentMemberMapper;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final UserPaymentMemberScheduler userPaymentMemberScheduler;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -150,6 +154,22 @@ public class UserPaymentMemberService {
 
         // 변환된 리스트를 매퍼로 전달
         int result = userPaymentMemberMapper.postPaymentMember(paymentMembers);
+
+        // 저장에 성공하면 사용자에게 승인 요청을 보냄
+        if(result >= 1) {
+            List<UserPaymentMemberDto> userPaymentMemberDtoList = userPaymentMemberMapper.selUserPaymentMemberByOrderId(req.getOrderId());
+
+            for(UserPaymentMemberDto user : userPaymentMemberDtoList) {
+                // 사장님 구독 경로로 예약 알림 메시지 전송
+                messagingTemplate.convertAndSend(
+                        "/queue/user/" + user.getUserId() + "/user/userPaymentMember",
+                        req
+                );
+
+                // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
+                userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+            }
+        }
         return result;
     }
 }

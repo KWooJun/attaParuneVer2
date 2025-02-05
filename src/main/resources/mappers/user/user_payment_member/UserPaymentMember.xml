@@ -72,4 +72,19 @@
         </foreach>
     </insert>
 
+    <select id="selUserPaymentMemberByOrderId">
+        SELECT order_id AS orderId, user_id AS userId, select_date AS selectDate
+        , point, approval_status AS approvalStatus, created_at AS createdAt, updated_at AS updatedAt
+        FROM user_payment_member
+        WHERE order_id = #{orderId}
+    </select>
+
+    <select id="selUserPaymentMemberByOrderIdAndUserId">
+        SELECT order_id AS orderId, user_id AS userId, select_date AS selectDate
+        , point, approval_status AS approvalStatus, created_at AS createdAt, updated_at AS updatedAt
+        FROM user_payment_member
+        WHERE order_id = #{orderId}
+        AND user_id = #{userId}
+    </select>
+
 </mapper>

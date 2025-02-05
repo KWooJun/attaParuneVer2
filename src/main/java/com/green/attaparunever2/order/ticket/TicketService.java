@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketMapper mapper;
+    private final TicketMapper ticketMapper;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 

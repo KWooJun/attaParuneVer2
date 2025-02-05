@@ -11,9 +11,9 @@ public interface OrderMapper {
     int postOrderDetail(OrderDetailPostReq p);
     int updOrderAccess(OrderAccessPatchReq p);
     OrderDto getOrder(OrderGetReq p);
-    RestaurantOrderDto selReservationOrderListByRestaurantId(long restaurantId);
-    RestaurantOrderDto selCompleteOrderListByRestaurantId(long restaurantId);
-    OrderDetailDto selOrderDetailByOrderId(long orderId);
+    List<RestaurantOrderDto> selReservationOrderListByRestaurantId(long restaurantId);
+    List<RestaurantOrderDto> selCompleteOrderListByRestaurantId(long restaurantId);
+    List<OrderDetailDto> selOrderDetailByOrderId(long orderId);
 
 
     List<OrderDetailPostReq> getTotalPrice(long OrderId);

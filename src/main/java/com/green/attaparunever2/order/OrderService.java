@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,5 +61,27 @@ public class OrderService {
         }
 
         return res;
+    }
+
+    // 예약 주문 목록
+    public List<RestaurantOrderDto> getReservationOrder(OrderListSelReq p) {
+        List<RestaurantOrderDto> orderList = mapper.selReservationOrderListByRestaurantId(p.getRestaurantId());
+
+        for(RestaurantOrderDto order : orderList) {
+            order.setOrderDetails(mapper.selOrderDetailByOrderId(order.getOrderId()));
+        }
+
+        return orderList;
+    }
+
+    // 예약완료 주문 목록(미결재)
+    public List<RestaurantOrderDto> getCompleteOrder(OrderListSelReq p) {
+        List<RestaurantOrderDto> orderList = mapper.selCompleteOrderListByRestaurantId(p.getRestaurantId());
+
+        for(RestaurantOrderDto order : orderList) {
+            order.setOrderDetails(mapper.selOrderDetailByOrderId(order.getOrderId()));
+        }
+
+        return orderList;
     }
 }

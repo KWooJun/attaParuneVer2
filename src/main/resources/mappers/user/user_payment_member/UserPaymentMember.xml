@@ -143,8 +143,8 @@
         WHERE B.order_id = #{orderId};
     </select>
 
-    <insert id="insTicket">
-        INSERT INTO ticket
+    <insert id="insTicket" useGeneratedKeys="true" keyProperty="ticketId">
+        INSERT ticket
         SET order_id = #{orderId}
         , expired_date = DATE_ADD(
         IFNULL ((

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Schema(title = "로그인 응답")
 public class AdminSignInRes {
     private long adminId;
+    private long restaurantId;
     private String roleId;
     private String aid;
     private String name;

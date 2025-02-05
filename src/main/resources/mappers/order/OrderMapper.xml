@@ -18,6 +18,14 @@
         price = (SELECT price FROM restaurant_menu WHERE menu_id = #{menuId})
     </insert>
 
+    <select id="getTotalPrice">
+        SELECT A.menu_count, A.price
+        FROM order_detail A
+        JOIN restaurant_menu B
+        ON A.menu_id = B.menu_id
+        WHERE A.order_id = #{orderId}
+    </select>
+
     <select id="getOrder">
         SELECT
         A.order_id AS orderId,

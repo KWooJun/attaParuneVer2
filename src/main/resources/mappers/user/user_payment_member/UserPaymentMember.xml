@@ -5,11 +5,45 @@
 <mapper namespace="com.green.attaparunever2.user.user_payment_member.UserPaymentMemberMapper">
 
     <select id="getPoint">
-        SELECT
-        point
+        SELECT point
         FROM user
         WHERE user_id = #{userId}
     </select>
+
+    <select id="getMemberPoint">
+        SELECT user_id, point
+        FROM user_payment_member
+        WHERE order_id = #{orderId}
+    </select>
+
+    <update id="updateUserPoint">
+        UPDATE user
+        SET point = #{newPoint}
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="getPaymentMemberByName">
+        SELECT `name`, uid
+        FROM user
+        WHERE company_id = #{companyId}
+        AND name LIKE CONCAT('%', #{name}, '%')
+        LIMIT #{size} OFFSET #{startIdx}
+    </select>
+
+    <update id="updPaymentAmount">
+        UPDATE user_payment_member
+        SET point = #{point}
+        WHERE order_id = #{orderId}
+        AND user_id = #{userId}
+        AND approval_status = 1
+    </update>
+
+    <delete id="deletePaymentMember">
+        DELETE FROM user_payment_member
+        WHERE order_id = #{orderId}
+        AND user_id = #{userId}
+        AND approval_status = 1
+    </delete>
 
     <select id="getPaymentMember">
         SELECT

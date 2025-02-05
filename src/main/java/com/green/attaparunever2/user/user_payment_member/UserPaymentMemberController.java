@@ -1,8 +1,6 @@
 package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.model.ResultResponse;
-import com.green.attaparunever2.user.UserService;
-import com.green.attaparunever2.user.model.*;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -160,13 +158,13 @@ public class UserPaymentMemberController {
 
     @PostMapping("insTicket")
     @Operation(summary = "티켓생성")
-    public ResultResponse<Integer> postTicket(long orderId){
-        int result = userPaymentMemberService.postTicket(orderId);
+    public ResultResponse<Long> postTicket(PostTicketReq p){
+        userPaymentMemberService.postTicket(p);
 
-        return ResultResponse.<Integer>builder()
+        return ResultResponse.<Long>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("티켓생성완료")
-                .resultData(result)
+                .resultData(p.getTicketId())
                 .build();
     }
 

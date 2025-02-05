@@ -2,7 +2,6 @@ package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.model.Paging;
-import com.green.attaparunever2.user.model.UserSignInRes;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
@@ -86,11 +85,11 @@ public class UserPaymentMemberService {
     }
 
     //결제요청(티켓 생성)
-    public int postTicket(long orderId){
+    public long postTicket(PostTicketReq p){
         // 1.오더 아이디에 포함된 사용자들이 전부 승인을 했는지 여부
-        List<SelUserOrderApprovalRes> list = userPaymentMemberMapper.selUserOrderApprovalAccess(orderId);
+        List<SelUserOrderApprovalRes> list = userPaymentMemberMapper.selUserOrderApprovalAccess(p.getOrderId());
 
-        int sumMenuPrice = userPaymentMemberMapper.sumMenuPrice(orderId);
+        int sumMenuPrice = userPaymentMemberMapper.sumMenuPrice(p.getOrderId());
         int sumUserPoint = 0;
         for(SelUserOrderApprovalRes item : list) {
             if (item.getApprovalStatus() != 1) {
@@ -114,9 +113,10 @@ public class UserPaymentMemberService {
 
             userPaymentMemberMapper.updUserPoint(item.getPoint(), item.getUserId());
         }
-        int result = userPaymentMemberMapper.insTicket(orderId);
 
-        return result;
+        int result = userPaymentMemberMapper.insTicket(p);
+
+        return p.getTicketId();
     }
 
 

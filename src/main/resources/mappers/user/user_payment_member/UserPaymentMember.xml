@@ -92,12 +92,12 @@
         FROM user_payment_member A
         INNER JOIN user B
         ON A.user_id = B.user_id
-        WHERE A.order_id = #{order_id};
+        WHERE A.order_id = #{orderId};
     </select>
 
     <update id="updUserPoint">
         UPDATE `user`
-        SET `point` = `point` - #{userPoint}
+        SET `point` = `point` - #{point}
         WHERE user_id = #{userId};
     </update>
 
@@ -106,7 +106,7 @@
         FROM `order` A
         INNER JOIN order_detail B
         ON A.order_id = B.order_id
-        WHERE B.order_id = 1;
+        WHERE B.order_id = #{orderId};
     </select>
 
     <insert id="insTicket">

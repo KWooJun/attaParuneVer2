@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -63,6 +65,54 @@ public class UserPaymentMemberController {
         return ResultResponse.<UserGetPaymentInfoRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("내게 온 결제 승인요청 정보조회 완료.")
+                .resultData(result)
+                .build();
+    }
+
+    @PatchMapping
+    @Operation(summary = "내게 온 결제 승인 요청 처리", description = "승인 및 거부 처리")
+    public ResultResponse<Integer> patchPaymentMember(@RequestBody UserPatchPaymentMemberReq p) {
+        int result = userPaymentMemberService.patchPaymentMember(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("내게 온 결제 승인 요청 수정 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping
+    @Operation(summary = "결제 승인 요청")
+    public ResultResponse<Integer> postPaymentMember(@RequestBody UserPostPaymentMemberReq p) {
+        int result = userPaymentMemberService.postPaymentMember(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("승인 요청 보내기 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @GetMapping("userOrderApprovalAccess")
+    @Operation(summary = "승인상태확인")
+    public ResultResponse<List<SelUserOrderApprovalRes>> getUserOrderApprovalAccess(long orderId) {
+        List<SelUserOrderApprovalRes> list = userPaymentMemberService.getUserOrderApprovalAccess(orderId);
+
+        return ResultResponse.<List<SelUserOrderApprovalRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("승인상태확인")
+                .resultData(list)
+                .build();
+    }
+
+    @PostMapping("insTicket")
+    @Operation(summary = "티켓생성")
+    public ResultResponse<Integer> postTicket(long orderId){
+        int result = userPaymentMemberService.postTicket(orderId);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("티켓생성완료")
                 .resultData(result)
                 .build();
     }

@@ -14,5 +14,4 @@ public interface UserMapper {
     UserMailVerificationDTO selUserEmailVerificationByUserId(long userId);
     UserMailVerificationDTO selUserEmailVerificationByUId(String uId);
     int delUserEmailVerification(long userId);
-
 }

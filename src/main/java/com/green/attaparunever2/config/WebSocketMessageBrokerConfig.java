@@ -26,7 +26,7 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // "/ws-stomp" 엔드포인트에 WebSocket 연결을 처리하도록 설정
         registry.addEndpoint("/ws-stomp")
-                .setAllowedOrigins("http://127.0.0.1:5500") // 허용할 오리진 추가
+                .setAllowedOrigins("http://192.168.0.192:5173", "http://192.168.0.204:5173") // 허용할 오리진 추가
                 .addInterceptors(handshakeInterceptor) // 인터셉터 등록
                 .withSockJS(); // SockJS를 사용할 경우
     }

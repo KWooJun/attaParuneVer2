@@ -4,12 +4,20 @@ import com.green.attaparunever2.admin.model.AdminSignUpReq;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.admin.model.*;
+import com.green.attaparunever2.config.CookieUtils;
+import com.green.attaparunever2.config.constant.JwtConst;
+import com.green.attaparunever2.config.jwt.JwtTokenProvider;
+import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.admin.model.AdminMailVerificationDTO;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.user.model.UserGetReq;
 import com.green.attaparunever2.user.model.UserGetRes;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,10 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AdminService {
     private final AdminMapper adminMapper;
     private final MailSendService mailSendService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtils cookieUtils;
+    private final JwtConst jwtConst;
 
     // 관리자 회원가입
     @Transactional
@@ -113,7 +125,7 @@ public class AdminService {
 
     // 로그인
     @Transactional
-    public AdminSignInRes signIn(AdminSignInReq p) {
+    public AdminSignInRes signIn(AdminSignInReq p, HttpServletResponse response) {
         AdminSignInRes res = adminMapper.selAdminByAid(p.getId());
 
         if(res == null || !BCrypt.checkpw(p.getPw(),res.getApw())) {
@@ -132,6 +144,19 @@ public class AdminService {
 
                 throw new CustomException(msg, HttpStatus.BAD_REQUEST);
             }*/
+
+            // AT, RT
+            JwtUser jwtUser = new JwtUser();
+
+            jwtUser.setSignedUserId(res.getAdminId());
+            jwtUser.setRoles(res.getRoleId());
+
+            String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
+            String refreshToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getRefreshTokenExpiry());
+
+            //RT를 쿠키에 담는다.
+            cookieUtils.setCookie(response, jwtConst.getRefreshTokenCookieName(), refreshToken, jwtConst.getRefreshTokenCookieExpiry());
+            res.setAccessToken(accessToken);
         }
 
         return res;
@@ -150,5 +175,16 @@ public class AdminService {
         }
 
         return 1;
+    }
+
+    public String getAccessToken(HttpServletRequest req) {
+        Cookie cookie = cookieUtils.getCookie(req, jwtConst.getRefreshTokenCookieName());
+        String refreshToken = cookie.getValue();
+        log.info("refreshToken: {}", refreshToken);
+
+        JwtUser jwtUser = jwtTokenProvider.getUser(refreshToken);
+        String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
+
+        return accessToken;
     }
 }

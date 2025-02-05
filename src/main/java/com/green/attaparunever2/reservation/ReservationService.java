@@ -28,7 +28,9 @@ public class ReservationService {
     private final TicketMapper ticketMapper;
 
     @Transactional
-    public int postReservation(ReservationPostReq req) {
+    public Long postReservation(ReservationPostReq req) {
+        Long createdOrderId = null; // 생성된 주문 PK(프론트로 반환해 줄 값)
+
         // 현재 예약이 있는지 검사
         ReservationDto reservationDto = reservationMapper.selActiveReservationByUserId(req.getUserId());
 
@@ -64,11 +66,12 @@ public class ReservationService {
         int result = orderService.postOrder(orderData);
 
         if(result == 1) {
+            createdOrderId = orderData.getOrderId();
             // 주문상세정보 생성
             for(ReservationMenuDto reservationMenuDto : req.getMenuList()) {
                 OrderDetailPostReq orderDetailData = new OrderDetailPostReq();
 
-                orderDetailData.setOrderId(orderData.getOrderId());
+                orderDetailData.setOrderId(createdOrderId);
                 orderDetailData.setMenuId(reservationMenuDto.getMenuId());
                 orderDetailData.setMenuCount(reservationMenuDto.getMenuCount());
 
@@ -82,7 +85,7 @@ public class ReservationService {
             // 예약 정보 생성
             ReservationInsDto reservationInsDto = new ReservationInsDto();
 
-            reservationInsDto.setOrderId(orderData.getOrderId());
+            reservationInsDto.setOrderId(createdOrderId);
             reservationInsDto.setReservationPeopleCount(req.getReservationPeopleCount());
             reservationInsDto.setReservationTime(req.getReservationTime());
             reservationInsDto.setUserPhone(req.getUserPhone());
@@ -108,7 +111,7 @@ public class ReservationService {
 
             // 일단 무조건 승인 되었다고 처리함.
             OrderAccessPatchReq p = new OrderAccessPatchReq();
-            p.setOrderId(orderData.getOrderId());
+            p.setOrderId(createdOrderId);
             p.setReservationStatus(1);
 
             result = orderService.updOrderAccess(p);
@@ -116,6 +119,6 @@ public class ReservationService {
             throw new CustomException("주문정보 생성에 실패 하였습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        return result;
+        return createdOrderId;
     }
 }

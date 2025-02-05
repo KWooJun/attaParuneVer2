@@ -20,4 +20,8 @@ public interface UserPaymentMemberMapper {
     int insTicket(long orderId);
     int updUserPoint(int point, long userId);
     int sumMenuPrice(long orderId);
+
+    int updPaymentAmount(UserPaymentAmountPatchReq p);
+    int deletePaymentMember(UserPaymentMemberDelReq p);
+    List<PaymentMemberDto> getPaymentMemberByName(long companyId, String name, int startIdx, Integer size);
 }

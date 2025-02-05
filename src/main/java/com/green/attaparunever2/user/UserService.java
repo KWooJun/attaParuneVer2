@@ -2,7 +2,15 @@ package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.config.CookieUtils;
+import com.green.attaparunever2.config.constant.JwtConst;
+import com.green.attaparunever2.config.jwt.JwtTokenProvider;
+import com.green.attaparunever2.config.jwt.JwtUser;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.user.model.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,6 +27,11 @@ import java.time.LocalDateTime;
 public class UserService {
     private final MailSendService mailSendService;
     private final UserMapper userMapper;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtils cookieUtils;
+    private final JwtConst jwtConst;
+    private final AuthenticationFacade authenticationFacade;
+
     // 회원가입
     @Transactional
     public int signUp(UserSignUpReq req) {
@@ -110,7 +123,7 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public UserSignInRes signIn(UserSignInReq p) {
+    public UserSignInRes signIn(UserSignInReq p, HttpServletResponse response) {
         UserSignInRes res = userMapper.selUserByUid(p.getId());
 
         if(res == null || !BCrypt.checkpw(p.getPw(),res.getUpw())) {
@@ -129,6 +142,19 @@ public class UserService {
 
                 throw new CustomException(msg, HttpStatus.BAD_REQUEST);
             }*/
+
+            // AT, RT
+            JwtUser jwtUser = new JwtUser();
+
+            jwtUser.setSignedUserId(res.getUserId());
+            jwtUser.setRoles(res.getRoleId());
+
+            String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
+            String refreshToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getRefreshTokenExpiry());
+
+            //RT를 쿠키에 담는다.
+            cookieUtils.setCookie(response, jwtConst.getRefreshTokenCookieName(), refreshToken, jwtConst.getRefreshTokenCookieExpiry());
+            res.setAccessToken(accessToken);
         }
 
         return res;
@@ -147,5 +173,16 @@ public class UserService {
         }
 
         return 1;
+    }
+
+    public String getAccessToken(HttpServletRequest req) {
+        Cookie cookie = cookieUtils.getCookie(req, jwtConst.getRefreshTokenCookieName());
+        String refreshToken = cookie.getValue();
+        log.info("refreshToken: {}", refreshToken);
+
+        JwtUser jwtUser = jwtTokenProvider.getUser(refreshToken);
+        String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
+
+        return accessToken;
     }
 }

@@ -1,14 +1,40 @@
 package com.green.attaparunever2.config;
 
+import com.green.attaparunever2.config.constant.InfoConst;
+import com.green.attaparunever2.config.constant.JwtConst;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@OpenAPIDefinition(
-        info = @Info(
-                title = "AttaParune(아따 빠르네)",
-                description = "아따 빠르네 직장인 테이블링 웹 서비스",
-                version = "v2"
-        )
-)
+@Configuration
+@RequiredArgsConstructor
 public class SwaggerConfiguration {
+
+        private final InfoConst infoConst;
+        private final JwtConst jwtConst;
+
+        @Bean
+        public OpenAPI openAPI() {
+                SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtConst.getHeaderKey());
+
+                SecurityScheme securityScheme = new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                        .in(SecurityScheme.In.HEADER)
+                        .name(jwtConst.getHeaderKey())
+                        .scheme(jwtConst.getScheme())
+                        .bearerFormat(jwtConst.getBearerFormat());
+
+                return new OpenAPI().components(
+                                new Components().addSecuritySchemes(jwtConst.getHeaderKey(), securityScheme))
+                        .addSecurityItem(securityRequirement)
+                        .info(new Info().title(infoConst.getTitle())
+                                .description(infoConst.getDescription())
+                                .version(infoConst.getVersion())
+                        );
+        }
 }

@@ -19,6 +19,7 @@ public class UserSignInRes {
     private String email;
     private String phone;
     private int point;
+    private String accessToken;
 
     @JsonIgnore // swagger 표시 안되지만, 응답 때 빼는 역할도 한다.
     private String upw;

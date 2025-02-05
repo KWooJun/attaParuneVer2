@@ -1,5 +1,10 @@
 #??? ??? ??? ??? ??(swagger ? jwt)
 constant:
+  info-const:
+    title: AttaParune(아따 빠르네)
+    description: 아따 빠르네 직장인 테이블링 웹 서비스
+    version: v2
+
   jwt-const:
     issuer: green@green.kr #?? ???
     secret: DaeguGreenArtAcademyClass502RoomForJavaSpringBootFighting
@@ -7,8 +12,8 @@ constant:
     claim-key: signedUser
     bearer-format: JWT
     scheme: Bearer
-    access-token-expiry: 86_400_000 #1? (MS)
-    refresh-token-expiry: 1_296_000_000 # 15? (MS)
+    access-token-expiry: 86_400_000 #1일 (MS)
+    refresh-token-expiry: 1_296_000_000 # 15일 (MS)
     refresh-token-cookie-name: refresh-token
     refresh-token-cookie-expiry: 1_296_000 #15? (S)
 

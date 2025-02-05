@@ -8,12 +8,12 @@ import com.green.attaparunever2.order.ticket.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketMapper mapper;
-    private final TicketMapper ticketMapper;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 
@@ -60,8 +60,21 @@ public class TicketService {
         return res;
     }
 
+    // 식권 사용 완료 처리
+    @Transactional
     public int updTicket(long ticketId) {
-        int result = ticketMapper.updTicket(ticketId);
+        // 식권 사용일 조회
+        TicketUseDateSelRes res = mapper.selTicketUseDate(ticketId);
+        // 이미 사용된 식권일 경우 예외 처리
+        if (res.getUseDate() != null && !res.getUseDate().isEmpty()) {
+            throw new CustomException("이미 사용된 티켓입니다.", HttpStatus.BAD_REQUEST);
+        }
+        // 식권 수정
+        int result = mapper.updTicket(ticketId);
+        // 식권 존재하지 않는 경우 예외 처리
+        if (result == 0) {
+            throw new CustomException("존재하지 않는 티켓입니다.", HttpStatus.BAD_REQUEST);
+        }
 
         return result;
     }

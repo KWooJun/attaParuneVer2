@@ -92,7 +92,7 @@
         FROM user_payment_member A
         INNER JOIN user B
         ON A.user_id = B.user_id
-        WHERE A.order_id = #{order_id};
+        WHERE A.order_id = #{orderId};
     </select>
 
     <update id="updUserPoint">

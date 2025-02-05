@@ -32,7 +32,7 @@ public class ReservationService {
         Long createdOrderId = null; // 생성된 주문 PK(프론트로 반환해 줄 값)
 
         // 현재 예약이 있는지 검사
-        ReservationDto reservationDto = reservationMapper.selActiveReservationByUserId(req.getUserId());
+        /*ReservationDto reservationDto = reservationMapper.selActiveReservationByUserId(req.getUserId());
 
         if(reservationDto != null) {
             if(reservationDto.getReservationStatus() == 1) {
@@ -53,7 +53,7 @@ public class ReservationService {
                                 + "예약 요청에 실패했습니다."
                         , HttpStatus.BAD_REQUEST);
             }
-        }
+        }*/
 
         // 주문정보 생성
         OrderPostReq orderData = new OrderPostReq();

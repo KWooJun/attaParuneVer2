@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -97,6 +100,56 @@ public class UserPaymentMemberService {
             throw new CustomException(msg, HttpStatus.BAD_REQUEST);
         }
 
+        return result;
+    }
+
+    //나에게 온 결제 요청 정보 승인 및 거부
+    public int patchPaymentMember(UserPatchPaymentMemberReq p) {
+        int result = userPaymentMemberMapper.patchPaymentMember(p);
+
+        return result;
+    }
+
+    @Transactional
+    public int postPaymentMember(UserPostPaymentMemberReq req) {
+        // userId와 point 리스트의 길이가 일치하지 않으면 예외 처리
+        if (req.getUserId().size() != req.getPoint().size()) {
+            throw new CustomException("사용자 수와 금액 수가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        List<Long> userIds = req.getUserId();
+
+        // user 테이블에서 각 userId의 포인트 조회
+        List<UserGetPointRes> userPoints = new ArrayList<>();
+        for (Long userId : userIds) {
+            userPoints.add(userPaymentMemberMapper.getPoint(userId)); // user 테이블에서 포인트 조회
+        }
+
+        // userId별로 user 테이블의 포인트와 비교하여 초과하면 예외 처리
+        for (int i = 0; i < userIds.size(); i++) {
+            Long userId = userIds.get(i);
+            int requestedPoint = req.getPoint().get(i); // 요청된 포인트 (user_payment_member 테이블에 저장될 포인트)
+            int userTablePoint = userPoints.get(i).getPoint(); // user 테이블에서 조회한 포인트
+
+            // 요청된 포인트가 user 테이블의 포인트를 초과하면 예외 처리
+            if (requestedPoint > userTablePoint) {
+                throw new CustomException("현재 보유 금액보다 결제 금액이 큽니다.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // userId와 point를 결합하여 새로운 리스트 생성
+        List<PostPaymentUserIdAndPoint> paymentMembers = new ArrayList<>();
+        for (int i = 0; i < req.getUserId().size(); i++) {
+            // Long -> long, Integer -> int로 변환하여 PostPaymentUserIdAndPoint 객체 생성
+            paymentMembers.add(new PostPaymentUserIdAndPoint(
+                    req.getOrderId(),
+                    req.getUserId().get(i).longValue(),  // Long -> long
+                    req.getPoint().get(i).intValue()     // Integer -> int
+            ));
+        }
+
+        // 변환된 리스트를 매퍼로 전달
+        int result = userPaymentMemberMapper.postPaymentMember(paymentMembers);
         return result;
     }
 }

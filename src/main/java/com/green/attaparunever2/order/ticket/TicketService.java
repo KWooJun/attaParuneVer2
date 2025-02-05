@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketMapper mapper;
+    private final TicketMapper ticketMapper;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 
@@ -65,15 +66,22 @@ public class TicketService {
     public int updTicket(long ticketId) {
         // 식권 사용일 조회
         TicketUseDateSelRes res = mapper.selTicketUseDate(ticketId);
+
+        // 식권이 존재하지 않으면 예외 처리
+        if (res == null) {
+            throw new CustomException("존재하지 않는 티켓입니다.", HttpStatus.BAD_REQUEST);
+        }
+
         // 이미 사용된 식권일 경우 예외 처리
         if (res.getUseDate() != null && !res.getUseDate().isEmpty()) {
             throw new CustomException("이미 사용된 티켓입니다.", HttpStatus.BAD_REQUEST);
         }
         // 식권 수정
         int result = mapper.updTicket(ticketId);
-        // 식권 존재하지 않는 경우 예외 처리
+
+        // 식권 수정에 실패
         if (result == 0) {
-            throw new CustomException("존재하지 않는 티켓입니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException("식권 사용에 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
 
         return result;

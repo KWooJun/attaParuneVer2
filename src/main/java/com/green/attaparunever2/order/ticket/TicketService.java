@@ -51,7 +51,7 @@ public class TicketService {
     public TicketGetRes getTicket(TicketGetReq p) {
         TicketGetRes res = new TicketGetRes();
 
-        TicketDto ticket = mapper.getTicket(p.getOrderId());
+        TicketDto ticket = mapper.getTicket(p.getTicketId());
         res.setTicket(ticket);
 
         if (ticket == null) {

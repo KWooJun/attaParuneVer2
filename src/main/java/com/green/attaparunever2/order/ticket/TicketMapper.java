@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TicketMapper {
     int postTicket(TicketPostReq p);
-    TicketDto getTicket(long orderId);
+    TicketDto getTicket(long ticketId);
     int delTicket(TicketDelReq req);
     TicketSelDto selTicketByOrderId(long orderId);
     int updTicket(long ticketId);

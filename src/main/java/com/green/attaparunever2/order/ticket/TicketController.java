@@ -51,8 +51,8 @@ public class TicketController {
 
     @GetMapping
     @Operation(summary = "식권 조회")
-    public ResultResponse<TicketGetRes> getTicket(@Valid @RequestParam long orderId) {
-        TicketGetReq req = new TicketGetReq(orderId);
+    public ResultResponse<TicketGetRes> getTicket(@Valid @RequestParam long ticketId) {
+        TicketGetReq req = new TicketGetReq(ticketId);
         TicketGetRes res = service.getTicket(req);
         return ResultResponse.<TicketGetRes>builder()
                 .statusCode("200")

@@ -10,9 +10,9 @@ import lombok.ToString;
 public class TicketGetReq {
 
     @Schema(title = "주문 PK")
-    private long orderId;
+    private long ticketId;
 
-    public TicketGetReq(long orderId) {
-        this.orderId = orderId;
+    public TicketGetReq(long ticketId) {
+        this.ticketId = ticketId;
     }
 }

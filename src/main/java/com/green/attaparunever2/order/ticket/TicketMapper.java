@@ -9,4 +9,5 @@ public interface TicketMapper {
     TicketDto getTicket(long orderId);
     int delTicket(TicketDelReq req);
     TicketSelDto selTicketByOrderId(long orderId);
+    int updTicket(long ticketId);
 }

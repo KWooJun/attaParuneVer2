@@ -14,4 +14,6 @@ public interface UserPaymentMemberMapper {
     UserGetPaymentInfoRes getPaymentInfo(UserGetPaymentInfoReq p);
     int patchPaymentMember(UserPatchPaymentMemberReq p); //내게 온 결제 승인 요청 수정
     int postPaymentMember(List<PostPaymentUserIdAndPoint> p); //결제 승인 요청 등록
+    List<UserPaymentMemberDto> selUserPaymentMemberByOrderId(long orderId);
+    UserPaymentMemberDto selUserPaymentMemberByOrderIdAndUserId(UserGetPaymentInfoReq req);
 }

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -87,6 +89,30 @@ public class UserPaymentMemberController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("승인 요청 보내기 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @GetMapping("userOrderApprovalAccess")
+    @Operation(summary = "승인상태확인")
+    public ResultResponse<List<SelUserOrderApprovalRes>> getUserOrderApprovalAccess(long orderId) {
+        List<SelUserOrderApprovalRes> list = userPaymentMemberService.getUserOrderApprovalAccess(orderId);
+
+        return ResultResponse.<List<SelUserOrderApprovalRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("승인상태확인")
+                .resultData(list)
+                .build();
+    }
+
+    @PostMapping("insTicket")
+    @Operation(summary = "티켓생성")
+    public ResultResponse<Integer> postTicket(long orderId){
+        int result = userPaymentMemberService.postTicket(orderId);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("티켓생성완료")
                 .resultData(result)
                 .build();
     }

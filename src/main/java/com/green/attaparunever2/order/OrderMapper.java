@@ -7,8 +7,9 @@ import java.util.List;
 
 @Mapper
 public interface OrderMapper {
-    int postOrder(OrderPostReq p);
+    long postOrder(OrderPostReq p);
     int postOrderDetail(OrderDetailPostReq p);
+    long postOrderWithDetail(OrderPostReq orderReq);
     int updOrderAccess(OrderAccessPatchReq p);
     OrderDto getOrder(OrderGetReq p);
     List<RestaurantOrderDto> selReservationOrderListByRestaurantId(long restaurantId);

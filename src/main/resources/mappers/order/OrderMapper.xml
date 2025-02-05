@@ -70,4 +70,30 @@
         WHERE order_id = #{orderId};
     </select>
 
+    <!-- 식당페이지 메인 예약 주문 목록 조회 -->
+    <select id="selReservationOrderListByRestaurantId">
+        SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, A.user_id AS userId, C.name AS userName, B.reservation_id AS reservationId
+        , reservation_time AS reservationTime, reservation_people_count AS reservationPeopleCount, user_phone AS userPhone
+        FROM `order` A LEFT JOIN reservation B
+        ON A.order_id = B.order_id
+        INNER JOIN user C
+        ON A.user_id = C.user_id
+        AND A.reservation_status = 0
+        WHERE A.restaurant_id = # {restaurantId}
+    </select>
+
+    <!-- 식당페이지 메인 예약 완료 주문 목록 조회 -->
+    <select id="selReservationOrderListByRestaurantId">
+        SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, A.user_id AS userId, D.name AS userName, B.reservation_id AS reservationId
+        , reservation_time AS reservationTime, reservation_people_count AS reservationPeopleCount, user_phone AS userPhone
+        FROM `order` A LEFT JOIN reservation B
+        ON A.order_id = B.order_id
+        INNER JOIN ticket C
+        ON A.order_id = C.order_id
+        AND C.ticket_status = 0
+        INNER JOIN user D
+        ON A.user_id = D.user_id
+        WHERE A.restaurant_id = # {restaurantId}
+    </select>
+
 </mapper>

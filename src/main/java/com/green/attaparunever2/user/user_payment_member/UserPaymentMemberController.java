@@ -72,7 +72,7 @@ public class UserPaymentMemberController {
                 .build();
     }
 
-    @PatchMapping
+    @PatchMapping("updAmount")
     @Operation(summary = "승인 요청 금액 수정")
     public ResultResponse<Integer> updPaymentAmount(UserPaymentAmountPatchReq p) {
         int result = userPaymentMemberService.updPaymentAmount(p);

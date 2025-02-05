@@ -29,11 +29,18 @@ public class SecurityConfiguration {
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(req ->
                                 req.requestMatchers("/api/user/sign-in"
+                                                , "/api/reservation"
                                                 , "/api/user/sign-up"
                                                 , "/api/user/access-token"
                                                 , "/api/admin/sign-in"
                                                 , "/api/admin/sign-up"
-                                                , "/api/admin/access-token").permitAll() // 인증 없이 접근 허용
+                                                , "/api/admin/access-token"
+                                        , "/api/restaurant"
+                                        , "/api/restaurant/main"
+                                        , "/api/restaurant/around"
+                                        , "/api/user/find-id"
+                                        , "/api/user/sign-up"
+                                        , "/api/user/company/status").permitAll() // 인증 없이 접근 허용
                                 .requestMatchers("/api/user/**", "/api/restaurant/**").hasRole("USER")
                                 .requestMatchers("/api/restaurant/**", "/api/admin/**").hasRole("RESTAURANT")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

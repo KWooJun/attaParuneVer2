@@ -12,15 +12,9 @@ import lombok.ToString;
 @Schema(title = "식권 정보")
 public class TicketDto {
     private String restaurantName;
-    @JsonIgnore
-    private int point;
     private int menuCount;
     private int totalOrderAmount;
-    private String menuNames;
     private int personCount;
     private String reservationTime;
-
-    public int getUserPoint() {
-        return point;
-    }
+    private String menuNames;
 }

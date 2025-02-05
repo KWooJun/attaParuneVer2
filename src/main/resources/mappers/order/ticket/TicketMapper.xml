@@ -61,7 +61,14 @@
     <update id="updTicket">
         UPDATE ticket
         SET ticket_status = 1
+          , use_date = NOW()
         WHERE ticket_id = #{ticketId}
     </update>
+
+    <select id="selTicketUseDate">
+        SELECT use_date AS useDate, ticket_id AS ticketId
+        FROM ticket
+        WHERE ticket_id = #{ticketId}
+    </select>
     
 </mapper>

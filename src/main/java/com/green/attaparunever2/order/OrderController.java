@@ -12,6 +12,8 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("order")
@@ -108,6 +110,28 @@ public class OrderController {
                 .statusCode("200")
                 .resultMsg("주문 상태 변경 완료")
                 .resultData(1L)
+                .build();
+    }
+
+    @GetMapping("restaurant")
+    @Operation(summary = "식당 주문 조회")
+    public ResultResponse<List<RestaurantOrderDto>> getCompleteOrder(@ParameterObject @ModelAttribute OrderListSelReq p) {
+        List<RestaurantOrderDto> res = service.getCompleteOrder(p);
+        return ResultResponse.<List<RestaurantOrderDto>>builder()
+                .statusCode("200")
+                .resultMsg("주문 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("restaurant/reservation")
+    @Operation(summary = "식당 주문 조회(예약)")
+    public ResultResponse<List<RestaurantOrderDto>> getReservationOrder(@ParameterObject @ModelAttribute OrderListSelReq p) {
+        List<RestaurantOrderDto> res = service.getReservationOrder(p);
+        return ResultResponse.<List<RestaurantOrderDto>>builder()
+                .statusCode("200")
+                .resultMsg("주문 조회 완료")
+                .resultData(res)
                 .build();
     }
 

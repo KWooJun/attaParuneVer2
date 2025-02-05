@@ -13,8 +13,9 @@ public class OrderDetailDto {
     private long orderDetailId;
     private long orderId;
     private long menuId;
+    private String menuName;
     private int menuCount;
     private int price;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
 }

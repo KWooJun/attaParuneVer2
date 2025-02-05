@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +16,8 @@ public class RestaurantOrderDto {
     private Long userId;
     private String userName;
     private Long reservationId;
-    private LocalDateTime reservationTime;
+    private String reservationTime;
     private int reservationPeopleCount;
     private String userPhone;
+    private List<OrderDetailDto> orderDetails;
 }

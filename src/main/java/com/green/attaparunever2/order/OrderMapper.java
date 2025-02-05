@@ -3,6 +3,8 @@ package com.green.attaparunever2.order;
 import com.green.attaparunever2.order.model.*;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface OrderMapper {
     int postOrder(OrderPostReq p);
@@ -14,4 +16,5 @@ public interface OrderMapper {
     OrderDetailDto selOrderDetailByOrderId(long orderId);
 
 
+    List<OrderDetailPostReq> getTotalPrice(long OrderId);
 }

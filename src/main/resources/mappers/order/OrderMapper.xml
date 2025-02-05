@@ -8,8 +8,6 @@
         INSERT INTO `order`
         SET user_id = #{userId}
         , restaurant_id = #{restaurantId}
-        , reservation_yn = #{reservationYn}
-        , reservation_status = #{reservationStatus}
     </insert>
 
     <insert id="postOrderDetail" useGeneratedKeys="true" keyProperty="orderDetailId">
@@ -19,6 +17,14 @@
         menu_count = #{menuCount},
         price = (SELECT price FROM restaurant_menu WHERE menu_id = #{menuId})
     </insert>
+
+    <select id="getTotalPrice">
+        SELECT A.menu_count, A.price
+        FROM order_detail A
+        JOIN restaurant_menu B
+        ON A.menu_id = B.menu_id
+        WHERE A.order_id = #{orderId}
+    </select>
 
     <select id="getOrder">
         SELECT
@@ -80,28 +86,6 @@
         ON A.user_id = C.user_id
         AND A.reservation_status = 0
         WHERE A.restaurant_id = # {restaurantId}
-    </select>
-
-    <!-- 식당페이지 메인 예약 완료 주문 목록 조회 -->
-    <select id="selCompleteOrderListByRestaurantId">
-        SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, A.user_id AS userId, D.name AS userName, B.reservation_id AS reservationId
-        , reservation_time AS reservationTime, reservation_people_count AS reservationPeopleCount, user_phone AS userPhone
-        FROM `order` A LEFT JOIN reservation B
-        ON A.order_id = B.order_id
-        INNER JOIN ticket C
-        ON A.order_id = C.order_id
-        AND C.ticket_status = 0
-        INNER JOIN user D
-        ON A.user_id = D.user_id
-        WHERE A.restaurant_id = # {restaurantId}
-    </select>
-
-    <!-- 주문의 메뉴 조회 -->
-    <select id="selOrderDetailByOrderId">
-        SELECT order_detail_id AS orderDetailId, order_id AS orderId, menu_id AS menuId, menu_count AS menuCount
-        , price, created_at AS createdAt, updated_at AS updatedAt
-        FROM order_detail
-        WHERE order_id = #{orderId};
     </select>
 
 </mapper>

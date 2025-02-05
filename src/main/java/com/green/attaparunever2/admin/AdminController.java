@@ -5,6 +5,8 @@ import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.admin.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -53,8 +55,8 @@ public class AdminController {
 
     @PostMapping("sign-in")
     @Operation(summary = "로그인")
-    public ResultResponse<?> signIn(@RequestBody AdminSignInReq p) {
-        AdminSignInRes adminSignInRes = adminService.signIn(p);
+    public ResultResponse<?> signIn(@RequestBody AdminSignInReq p, HttpServletResponse response) {
+        AdminSignInRes adminSignInRes = adminService.signIn(p, response);
 
         return ResultResponse.<AdminSignInRes>builder()
                 .statusCode(HttpStatus.OK.toString())
@@ -85,5 +87,11 @@ public class AdminController {
                 .resultMsg("아이디 찾기 이메일 전송 완료")
                 .resultData(result)
                 .build();
+    }
+
+    @GetMapping("access-token")
+    @Operation(summary = "엑세스 토큰 재발행")
+    public String getAccessToken(HttpServletRequest req) {
+        return adminService.getAccessToken(req);
     }
 }

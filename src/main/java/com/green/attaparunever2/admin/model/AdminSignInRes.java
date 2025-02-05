@@ -15,6 +15,7 @@ public class AdminSignInRes {
     private String name;
     private String email;
     private String phone;
+    private String accessToken;
 
     @JsonIgnore // swagger 표시 안되지만, 응답 때 빼는 역할도 한다.
     private String apw;

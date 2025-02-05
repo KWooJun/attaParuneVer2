@@ -4,6 +4,8 @@ import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.user.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,8 +57,8 @@ public class UserController {
 
     @PostMapping("sign-in")
     @Operation(summary = "로그인")
-    public ResultResponse<?> signIn(@RequestBody UserSignInReq p) {
-        UserSignInRes userSignInRes = userService.signIn(p);
+    public ResultResponse<?> signIn(@RequestBody UserSignInReq p, HttpServletResponse response) {
+        UserSignInRes userSignInRes = userService.signIn(p, response);
 
         return ResultResponse.<UserSignInRes>builder()
                 .statusCode(HttpStatus.OK.toString())
@@ -87,5 +89,11 @@ public class UserController {
                 .resultMsg("아이디 찾기 이메일 전송 완료")
                 .resultData(result)
                 .build();
+    }
+
+    @GetMapping("access-token")
+    @Operation(summary = "엑세스 토큰 재발행")
+    public String getAccessToken(HttpServletRequest req) {
+        return userService.getAccessToken(req);
     }
 }

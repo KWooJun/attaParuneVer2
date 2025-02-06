@@ -83,4 +83,22 @@
         DELETE FROM user
         WHERE user_id = #{userId}
     </delete>
+
+    <select id="selUserPastOrderCheck">
+        SELECT C.restaurant_name AS restaurantName, D.file_path AS filePath, A.reservation_yn AS reservationYn
+             , GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuName, SUM(E.menu_count * F.price) AS menuTotalPrice
+             , E.menu_count AS menuCount
+             , A.created_at AS createdAt
+          FROM `order` A
+         INNER JOIN restaurant C
+            ON A.restaurant_id = C.restaurant_id
+          LEFT JOIN restaurant_pic D
+            ON C.restaurant_id = D.restaurant_id
+         INNER JOIN order_detail E
+            ON A.order_id = E.order_id
+         INNER JOIN restaurant_menu F
+            ON E.menu_id = F.menu_id
+         WHERE A.user_id = #{userId}
+         GROUP BY A.order_id;
+    </select>
 </mapper>

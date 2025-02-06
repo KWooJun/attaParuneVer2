@@ -3,6 +3,8 @@ package com.green.attaparunever2.user;
 import com.green.attaparunever2.user.model.*;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     int insUser(UserSignUpReq req);
@@ -14,4 +16,5 @@ public interface UserMapper {
     UserMailVerificationDTO selUserEmailVerificationByUserId(long userId);
     UserMailVerificationDTO selUserEmailVerificationByUId(String uId);
     int delUserEmailVerification(long userId);
+    List<SelUserOrderPastCheckRes> selUserPastOrderCheck(SelUserOrderPastCheckReq p);
 }

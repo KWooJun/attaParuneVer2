@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -184,5 +185,11 @@ public class UserService {
         String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
 
         return accessToken;
+    }
+
+    public List<SelUserOrderPastCheckRes> getUserPastOrderCheck(SelUserOrderPastCheckReq p){
+        List<SelUserOrderPastCheckRes> res = userMapper.selUserPastOrderCheck(p);
+
+        return res;
     }
 }

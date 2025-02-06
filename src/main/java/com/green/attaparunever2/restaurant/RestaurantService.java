@@ -10,7 +10,6 @@ import com.green.attaparunever2.restaurant.restaurant_menu.model.MenuSelList;
 import com.green.attaparunever2.restaurant.restaurant_pic.RestaurantPicMapper;
 import com.green.attaparunever2.restaurant.restaurant_pic.model.RestaurantPicAroundSel;
 import com.green.attaparunever2.restaurant.restaurant_pic.model.RestaurantPicSel;
-import com.green.attaparunever2.restaurant.restaurant_pic.model.UpdRestaurantMenuPicReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +117,7 @@ public class RestaurantService {
         p.setSysMaxLat(maxLatitude);
         p.setSysMaxLng(maxLongitude);
 
+
         log.info("aiobhdfibhfdibhi {} asda {} asdasd", p.getSysMinLat(), p.getSysMinLng());
         log.info("asdasifjaisfjasi {} {}", p.getSysMaxLat(), p.getSysMaxLng());
 
@@ -174,6 +177,50 @@ public class RestaurantService {
             RestaurantPicAroundSel picList = restaurantPicMapper.selRestaurantMainPic(item.getRestaurantId());
             item.setRestaurantAroundPicList(picList);
         }
+        return res;
+    }
+
+    public SelRestaurantDashBoardRes getRestaurantDashboard(SelRestaurantDashboardReq req) {
+        SelRestaurantDashBoardRes res = new SelRestaurantDashBoardRes();
+
+        res.setRestaurantId(req.getRestaurantId());
+
+        // 일별, 월별 총 매출 받아옴
+        RestaurantTotalPointDto dayPoint = restaurantMapper.selRestaurantDayPoint(req);
+        RestaurantTotalPointDto monthPoint = restaurantMapper.selRestaurantMonthPoint(req);
+
+        if(dayPoint != null) {
+            res.setDayPoint(dayPoint.getTotalPoint());
+        }
+        if(monthPoint != null) {
+            res.setMonthPoint(monthPoint.getTotalPoint());
+        }
+
+        // 주간 예약 현황 받아옴
+        SelRestaurantOrderReq orderReq = new SelRestaurantOrderReq();
+
+        // 현재일시의 주간 일자를 구한다.(자바로 구현 해야함.)
+
+        // 날짜 형식 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // String을 LocalDate로 변환
+        LocalDate currentDate = LocalDate.parse(req.getDate(), formatter);
+
+        // 월요일이 주간의 시작일이므로, 현재 날짜 기준으로 가장 가까운 월요일을 찾기
+        LocalDate startOfWeek = currentDate.with(DayOfWeek.MONDAY);
+
+        // 일요일은 월요일에서 6일 더한 날짜
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+
+        orderReq.setRestaurantId(req.getRestaurantId());
+        orderReq.setStartDate(startOfWeek.format(formatter));
+        orderReq.setEndDate(endOfWeek.format(formatter));
+
+        List<RestaurantWeekOrderCountDto> weekOrder = restaurantMapper.selRestaurantWeekOrderCount(orderReq);
+
+        res.setWeekOrderList(weekOrder);
+
         return res;
     }
 }

@@ -14,10 +14,10 @@ public class AdminSignUpReq {
     @Schema(title = "관리자 권한", example = "ROLE_RESTAURANT", requiredMode = Schema.RequiredMode.REQUIRED)
     private String roleId;
     @JsonProperty("id") // JSON에서는 "id"로 사용
-    @Schema(title = "관리자 아이디", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name="id", title = "관리자 아이디", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
     private String aid;
     @JsonProperty("pw")
-    @Schema(title = "관리자 비밀번호", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name="pw", title = "관리자 비밀번호", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
     private String apw;
     @Schema(title = "관리자 이름", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;

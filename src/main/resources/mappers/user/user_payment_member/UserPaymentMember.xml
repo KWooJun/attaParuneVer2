@@ -23,7 +23,7 @@
     </update>
 
     <select id="getPaymentMemberByName">
-        SELECT `name`, uid
+        SELECT `name`, uid, user_id AS userId
         FROM user
         WHERE company_id = #{companyId}
         AND name LIKE CONCAT('%', #{name}, '%')

@@ -33,42 +33,12 @@ public class RestaurantService {
     private final RestaurantMenuMapper restaurantMenuMapper;
     private final MyFileUtils myFileUtils;
 
-    @Transactional
-    public InsRestaurantRes postRestaurant(List<MultipartFile> filePath, InsRestaurantReq p){
+    public int postRestaurant(InsRestaurantReq p){
         int result = restaurantMapper.insRestaurant(p);
         if (result == 0) {
             throw new CustomException("식당 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
-        //파일 등록
-        long restaurantId = p.getRestaurantId();
-
-        String middlePath = String.format("restaurant/%d", restaurantId);
-        myFileUtils.makeFolders(middlePath);
-
-        List<String> picNameList = new ArrayList<>(filePath.size());
-        for(MultipartFile pic : filePath) {
-            //각 파일 랜덤파일명 만들기
-            String savedPicName = myFileUtils.makeRandomFileName(pic);
-            picNameList.add(savedPicName);
-            String picPath = String.format("%s/%s", middlePath, savedPicName);
-            try {
-                myFileUtils.transferTo(pic, picPath);
-            } catch (IOException e) {
-                //폴더 삭제 처리
-                String delFolderPath = String.format("%s/%s", myFileUtils.getUploadPath(), middlePath);
-                myFileUtils.deleteFolder(delFolderPath, true);
-                throw new CustomException("식당 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
-            }
-        }
-        RestaurantPicDto restaurantPicDto = new RestaurantPicDto();
-        restaurantPicDto.setRestaurantId(restaurantId);
-        restaurantPicDto.setFilePath(picNameList);
-        int resultPics = restaurantPicMapper.insRestaurantPic(restaurantPicDto);
-
-        return InsRestaurantRes.builder()
-                .restaurantId(restaurantId)
-                .filePath(picNameList)
-                .build();
+        return result;
     }
 
     public SelRestaurantRes getRestaurant(SelRestaurantReq p){

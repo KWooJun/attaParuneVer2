@@ -54,7 +54,12 @@
         AND lng &gt; #{sysMinLng}
         AND lng &lt; #{sysMaxLng}
         <if test = " orderFilter != null and orderFilter != '' ">
-            ORDER BY distance ASC;
+            <if test = " orderFilter == 0">
+                ORDER BY F.restaurant_name ASC;
+            </if>
+            <if test = " orderFilter == 1">
+                ORDER BY distance ASC;
+            </if>
         </if>
     </select>
 

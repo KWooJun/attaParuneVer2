@@ -59,10 +59,15 @@ public class UserPaymentMemberController {
 
     @GetMapping("searchPeople")
     @Operation(summary = "결제 인원 검색")
-    public ResultResponse<UserPaymentMemberGetRes> getPaymentMemberByName(@ParameterObject @Valid long companyId
-            , String name, @RequestParam(defaultValue = "1") int page) {
+    public ResultResponse<UserPaymentMemberGetRes> getPaymentMemberByName(
+            @ParameterObject @Valid UserPaymentMemberGetReq p,
+            @RequestParam String name) {
 
-        UserPaymentMemberGetRes res = userPaymentMemberService.getPaymentMemberByName(companyId, name);
+        List<PaymentMemberDto> memberList = userPaymentMemberService.getPaymentMemberByName(p, name);
+
+        UserPaymentMemberGetRes res = new UserPaymentMemberGetRes();
+        res.setMemberList(memberList);
+
         return ResultResponse.<UserPaymentMemberGetRes>builder()
                 .statusCode("200")
                 .resultMsg("결제 인원 검색 완료")

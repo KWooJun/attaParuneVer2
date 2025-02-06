@@ -22,6 +22,7 @@ public class OrderDetailPostReq {
     @Schema(title = "메뉴 수량")
     private int menuCount;
 
+    @JsonIgnore
     @Schema(title = "메뉴 주문 가격")
     private int price;
 }

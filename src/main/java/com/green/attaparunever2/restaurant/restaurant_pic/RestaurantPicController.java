@@ -1,6 +1,7 @@
 package com.green.attaparunever2.restaurant.restaurant_pic;
 
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.restaurant.model.InsRestaurantRes;
 import com.green.attaparunever2.restaurant.restaurant_pic.model.UpdRestaurantMenuPicReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +18,18 @@ import java.util.List;
 @Tag(name = "사진 수정", description = "식당과 메뉴 사진 수정")
 public class RestaurantPicController {
     private final RestaurantPicService restaurantPicService;
+
+    @PostMapping("restaurant")
+    @Operation(summary = "식당 메뉴 사진 등록")
+    public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> filePath, @RequestParam long restaurantId) {
+        InsRestaurantRes res = restaurantPicService.postRestaurantPic(filePath, restaurantId);
+
+        return ResultResponse.<InsRestaurantRes>builder()
+                .statusCode("200")
+                .resultMsg("식당 사진 등록 성공")
+                .resultData(res)
+                .build();
+    }
 
     @PatchMapping("/restaurant/menu")
     @Operation(summary = "식당 메뉴 사진 수정")

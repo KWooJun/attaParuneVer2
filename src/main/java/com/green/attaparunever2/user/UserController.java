@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -95,5 +97,18 @@ public class UserController {
     @Operation(summary = "엑세스 토큰 재발행")
     public String getAccessToken(HttpServletRequest req) {
         return userService.getAccessToken(req);
+    }
+
+    @GetMapping("pastOrderCheck")
+    @Operation(summary = "지난 결제 내역 확인")
+    public ResultResponse<List<SelUserOrderPastCheckRes>> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
+        List<SelUserOrderPastCheckRes> resList = userService.getUserPastOrderCheck(p);
+
+        return ResultResponse.<List<SelUserOrderPastCheckRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("지난 결제 내역 확인")
+                .resultData(resList)
+                .build();
+
     }
 }

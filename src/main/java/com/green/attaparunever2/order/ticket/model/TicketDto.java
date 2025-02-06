@@ -13,7 +13,7 @@ import lombok.ToString;
 public class TicketDto {
     private String restaurantName;
     private int menuCount;
-    private int totalOrderAmount;
+    private int totalAmount;
     private int personCount;
     private String reservationTime;
     private String menuNames;

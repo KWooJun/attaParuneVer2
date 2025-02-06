@@ -1,7 +1,6 @@
 package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
-import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
@@ -135,25 +134,11 @@ public class UserPaymentMemberService {
 //    }
 
     //결제 인원 조회 >> 수정
-    public UserPaymentMemberGetRes getPaymentMemberByName(long companyId, String name) {
-
-        Paging paging = new Paging(1, 20);
-
-//        UserPaymentMemberGetRes res = new UserPaymentMemberGetRes();
-//        List<UserPaymentMemberDto> memberList = mapper.getPaymentMemberByName(companyId, name, paging.getStartIdx(), paging.getSize());
-//        res.setMemberList(memberList);
-
-        List<PaymentMemberDto> member = userPaymentMemberMapper.getPaymentMemberByName(companyId, name, 0, Integer.MAX_VALUE);
-
-        UserPaymentMemberGetRes res = new UserPaymentMemberGetRes();
-
-        if (member.size() <= 20) {
-            res.setMemberList(member);
-        } else {
-            List<PaymentMemberDto> memberList = userPaymentMemberMapper.getPaymentMemberByName(companyId, name, paging.getStartIdx(), paging.getSize());
-            res.setMemberList(memberList);
-        }
-        return res;
+    public List<PaymentMemberDto> getPaymentMemberByName(UserPaymentMemberGetReq p, String name) {
+        int size = p.getSize();
+        int startIdx = (p.getPage() - 1) * size;
+        List<PaymentMemberDto> memberList = userPaymentMemberMapper.getPaymentMemberByName(p.getCompanyId(), name, size, startIdx);
+        return memberList;
     }
 
 

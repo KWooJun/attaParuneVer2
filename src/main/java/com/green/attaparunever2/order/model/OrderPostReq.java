@@ -24,15 +24,15 @@ public class OrderPostReq {
     @Schema(title = "식당 PK")
     private long restaurantId;
 
-    @JsonIgnore
-    @NotNull
-    @Schema(title = "예약 여부", example = "0: 미예약, 1: 예약", requiredMode = Schema.RequiredMode.REQUIRED)
-    private int reservationYn;
-
-    @JsonIgnore
-    @NotNull
-    @Schema(title = "예약 상태", example = "0:미승인, 1:승인, 2:거부, 3:취소", requiredMode = Schema.RequiredMode.REQUIRED)
-    private int reservationStatus;
+//    @JsonIgnore
+//    @NotNull
+//    @Schema(title = "예약 여부", example = "0: 미예약, 1: 예약", requiredMode = Schema.RequiredMode.REQUIRED)
+//    private int reservationYn;
+//
+//    @JsonIgnore
+//    @NotNull
+//    @Schema(title = "예약 상태", example = "0:미승인, 1:승인, 2:거부, 3:취소", requiredMode = Schema.RequiredMode.REQUIRED)
+//    private int reservationStatus;
 
     private List<OrderDetailPostReq> orderDetails;
 

@@ -19,7 +19,7 @@ public class OrderService {
     private final TicketService ticketService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public int postOrder(OrderPostReq p) {
+    public long postOrder(OrderPostReq p) {
         return mapper.postOrder(p);
     }
 
@@ -28,12 +28,12 @@ public class OrderService {
     }
 
     @Transactional
-    public int postOrderWithDetail(OrderPostReq orderReq) {
-        mapper.postOrder(orderReq);
+    public long postOrderWithDetail(OrderPostReq orderReq) {
+        long orderId = mapper.postOrder(orderReq);
 
         int totalPrice = 0;
         for (OrderDetailPostReq detailReq : orderReq.getOrderDetails()) {
-            detailReq.setOrderId(orderReq.getOrderId());
+            detailReq.setOrderId(orderId);
             int itemPrice = detailReq.getMenuCount() * detailReq.getPrice();
             totalPrice += itemPrice;
             mapper.postOrderDetail(detailReq);

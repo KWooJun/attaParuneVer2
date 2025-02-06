@@ -74,20 +74,20 @@ public class OrderController {
 
     @PostMapping("/with-detail")
     @Operation(summary = "주문 정보 등록")
-    public ResultResponse<Integer> postOrderWithDetail(@Valid @RequestBody OrderPostReq orderReq, BindingResult bindingResult) {
+    public ResultResponse<Long> postOrderWithDetail(@Valid @RequestBody OrderPostReq orderReq, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResultResponse.<Integer>builder()
+            return ResultResponse.<Long>builder()
                     .statusCode("400")
                     .resultMsg("주문 정보 등록 실패")
-                    .resultData(0)
+                    .resultData(0L)
                     .build();
         }
 
-        int totalPrice = service.postOrderWithDetail(orderReq);
-        return ResultResponse.<Integer>builder()
+        service.postOrderWithDetail(orderReq);
+        return ResultResponse.<Long>builder()
                 .statusCode("200")
                 .resultMsg("주문 정보 등록 완료")
-                .resultData(totalPrice)
+                .resultData(orderReq.getOrderId())
                 .build();
     }
 

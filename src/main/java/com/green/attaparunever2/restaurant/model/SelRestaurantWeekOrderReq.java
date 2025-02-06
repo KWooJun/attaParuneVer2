@@ -7,8 +7,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class RestaurantWeekOrderCountDto {
-    private String date;
-    private int reservationOrders;
-    private int seatedOrders;
+public class SelRestaurantWeekOrderReq {
+    private long restaurantId;
+    private String startDate;
+    private String endDate;
 }

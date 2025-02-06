@@ -1,6 +1,7 @@
 package com.green.attaparunever2.admin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -12,9 +13,11 @@ import lombok.Setter;
 public class AdminSignUpReq {
     @Schema(title = "관리자 권한", example = "ROLE_RESTAURANT", requiredMode = Schema.RequiredMode.REQUIRED)
     private String roleId;
-    @Schema(title = "관리자 아이디", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("id") // JSON에서는 "id"로 사용
+    @Schema(name="id", title = "관리자 아이디", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
     private String aid;
-    @Schema(title = "관리자 비밀번호", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("pw")
+    @Schema(name="pw", title = "관리자 비밀번호", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
     private String apw;
     @Schema(title = "관리자 이름", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;

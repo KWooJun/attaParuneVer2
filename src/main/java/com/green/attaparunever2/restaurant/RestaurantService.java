@@ -191,13 +191,17 @@ public class RestaurantService {
 
         if(dayPoint != null) {
             res.setDayPoint(dayPoint.getTotalPoint());
+        } else {
+            res.setDayPoint(0);
         }
         if(monthPoint != null) {
             res.setMonthPoint(monthPoint.getTotalPoint());
+        } else {
+            res.setMonthPoint(0);
         }
 
         // 주간 예약 현황 받아옴
-        SelRestaurantOrderReq orderReq = new SelRestaurantOrderReq();
+        SelRestaurantWeekOrderReq orderReq = new SelRestaurantWeekOrderReq();
 
         // 현재일시의 주간 일자를 구한다.(자바로 구현 해야함.)
 
@@ -222,5 +226,9 @@ public class RestaurantService {
         res.setWeekOrderList(weekOrder);
 
         return res;
+    }
+
+    public List<SelRestaurantOrderRes> getRestaurantPoint(SelRestaurantOrderReq req) {
+        return restaurantMapper.selRestaurantPointByCreatedAt(req);
     }
 }

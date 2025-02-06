@@ -112,11 +112,11 @@ public class ReservationService {
             );
 
             // 일단 무조건 승인 되었다고 처리함.
-            OrderAccessPatchReq p = new OrderAccessPatchReq();
+            /*OrderAccessPatchReq p = new OrderAccessPatchReq();
             p.setOrderId(createdOrderId);
             p.setReservationStatus(1);
 
-            result = orderService.updOrderAccess(p);
+            result = orderService.updOrderAccess(p);*/
         } else {
             throw new CustomException("주문정보 생성에 실패 하였습니다.", HttpStatus.BAD_REQUEST);
         }

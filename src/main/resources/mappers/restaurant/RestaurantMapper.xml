@@ -166,7 +166,8 @@
                 AND DATE_FORMAT(A.use_date, '%Y-%m-%d')
                 <![CDATA[ <= ]]>
                 #{endDate}
-            );
+            )
+        LIMIT #{startIdx}, #{size}
     </select>
 
     <!-- 식당 일일 총 매출 -->
@@ -197,13 +198,22 @@
 
     <!-- 식당 주간 주문 내역 -->
     <select id="selRestaurantWeekOrderCount">
-        SELECT DATE(created_at) AS date,
-        COUNT(CASE WHEN reservation_yn = 0 THEN 1 END) AS reservationOrders,
-        COUNT(CASE WHEN reservation_yn = 1 THEN 1 END) AS seatedOrders
-        FROM `order`
-        WHERE DATE(created_at) BETWEEN #{startDate} AND #{endDate}
-        AND restaurant_id = #{restaurantId}
-        GROUP BY DATE(created_at)
-        ORDER BY DATE(created_at)
+        WITH RECURSIVE DateRange AS (
+        SELECT DATE(#{startDate}) AS report_date
+        UNION ALL
+        SELECT DATE_ADD(report_date, INTERVAL 1 DAY)
+        FROM DateRange
+        WHERE report_date <![CDATA[ < ]]> DATE(#{endDate})
+        )
+        SELECT
+        dr.report_date AS date,
+        COALESCE(COUNT(CASE WHEN o.reservation_yn = 0 THEN 1 END), 0) AS reservationOrders,
+        COALESCE(COUNT(CASE WHEN o.reservation_yn = 1 THEN 1 END), 0) AS seatedOrders
+        FROM DateRange dr
+        LEFT JOIN `order` o
+        ON DATE(o.created_at) = dr.report_date
+        AND o.restaurant_id = #{restaurantId}
+        GROUP BY dr.report_date
+        ORDER BY dr.report_date
     </select>
 </mapper>

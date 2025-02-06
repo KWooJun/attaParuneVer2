@@ -31,13 +31,13 @@ public class OrderService {
 
     @Transactional
     public long postOrderWithDetail(OrderPostReq p) {
-        long orderId = mapper.postOrder(p);
+        long res = mapper.postOrder(p);
 
         for (OrderDetailPostReq detailReq : p.getOrderDetails()) {
             detailReq.setOrderId(p.getOrderId());
             mapper.postOrderDetail(detailReq);
         }
-        return orderId;
+        return res;
     }
 
     public int updOrderAccess(OrderAccessPatchReq p) {

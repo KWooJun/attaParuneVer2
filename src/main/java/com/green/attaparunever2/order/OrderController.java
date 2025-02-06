@@ -20,7 +20,6 @@ import java.util.List;
 @Tag(name = "주문", description = "주문 관리")
 public class OrderController {
     private final OrderService service;
-    private final TicketService ticketService;
 
 //    @PostMapping
 //    @Operation(summary = "주문 등록")
@@ -72,9 +71,11 @@ public class OrderController {
 //                .build();
 //    }
 
+
+
     @PostMapping("/with-detail")
     @Operation(summary = "주문 정보 등록")
-    public ResultResponse<Long> postOrderWithDetail(@Valid @RequestBody OrderPostReq orderReq, BindingResult bindingResult) {
+    public ResultResponse<Long> postOrderWithDetail(@Valid @RequestBody OrderPostReq p, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResultResponse.<Long>builder()
                     .statusCode("400")
@@ -83,11 +84,11 @@ public class OrderController {
                     .build();
         }
 
-        service.postOrderWithDetail(orderReq);
+        service.postOrderWithDetail(p);
         return ResultResponse.<Long>builder()
                 .statusCode("200")
                 .resultMsg("주문 정보 등록 완료")
-                .resultData(orderReq.getOrderId())
+                .resultData(p.getOrderId())
                 .build();
     }
 

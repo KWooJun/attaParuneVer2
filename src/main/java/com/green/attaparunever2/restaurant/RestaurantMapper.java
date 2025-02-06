@@ -22,7 +22,7 @@ public interface RestaurantMapper {
     // 식당 월별 매출 정보 조회
     RestaurantTotalPointDto selRestaurantMonthPoint(SelRestaurantDashboardReq req);
     // 식당 주간 주문 내역 조회
-    List<RestaurantWeekOrderCountDto> selRestaurantWeekOrderCount(SelRestaurantOrderReq req);
+    List<RestaurantWeekOrderCountDto> selRestaurantWeekOrderCount(SelRestaurantWeekOrderReq req);
     // 식당 매출 정보 조회
-    SelRestaurantOrderRes selRestaurantPointByCreatedAt(SelRestaurantOrderReq req);
+    List<SelRestaurantOrderRes> selRestaurantPointByCreatedAt(SelRestaurantOrderReq req);
 }

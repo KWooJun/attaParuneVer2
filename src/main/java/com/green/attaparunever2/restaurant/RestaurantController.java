@@ -127,4 +127,17 @@ public class RestaurantController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("orderList")
+    @Operation(summary = "식당 매출정보 리스트 조회")
+    public ResultResponse<List<SelRestaurantOrderRes>> getRestaurantPoint(@ParameterObject @ModelAttribute SelRestaurantOrderReq p){
+        List<SelRestaurantOrderRes> res = restaurantService.getRestaurantPoint(p);
+
+        return ResultResponse.<List<SelRestaurantOrderRes>>builder()
+                .statusCode("200")
+                .resultMsg("식당 매출 정보 대시보드 정보 조회 완료.")
+                .resultData(res)
+                .build();
+    }
+
 }

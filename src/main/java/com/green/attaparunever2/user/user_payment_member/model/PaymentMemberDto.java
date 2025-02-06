@@ -13,4 +13,6 @@ public class PaymentMemberDto {
     private String name;
     @Schema(title = "사용자 아이디")
     private String uid;
+    @Schema(title = "사용자 PK")
+    private long userId;
 }

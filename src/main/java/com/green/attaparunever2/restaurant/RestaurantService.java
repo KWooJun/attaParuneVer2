@@ -199,24 +199,6 @@ public class RestaurantService {
 
         res.setWeekOrderList(weekOrder);
 
-        //---------------------------------------
-        res.setDayPoint(197900);
-        res.setMonthPoint(9650500);
-        res.getWeekOrderList().get(0).setSeatedOrders(3);
-        res.getWeekOrderList().get(0).setReservationOrders(3);
-        res.getWeekOrderList().get(1).setSeatedOrders(4);
-        res.getWeekOrderList().get(1).setReservationOrders(2);
-        res.getWeekOrderList().get(2).setSeatedOrders(7);
-        res.getWeekOrderList().get(2).setReservationOrders(6);
-        res.getWeekOrderList().get(3).setSeatedOrders(2);
-        res.getWeekOrderList().get(3).setReservationOrders(3);
-        res.getWeekOrderList().get(4).setSeatedOrders(1);
-        res.getWeekOrderList().get(4).setReservationOrders(4);
-        res.getWeekOrderList().get(5).setSeatedOrders(8);
-        res.getWeekOrderList().get(5).setReservationOrders(9);
-        res.getWeekOrderList().get(6).setSeatedOrders(6);
-        res.getWeekOrderList().get(6).setReservationOrders(7);
-
         return res;
     }
 

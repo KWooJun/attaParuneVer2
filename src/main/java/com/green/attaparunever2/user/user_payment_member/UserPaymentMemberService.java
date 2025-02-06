@@ -3,7 +3,12 @@ package com.green.attaparunever2.user.user_payment_member;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.order.OrderMapper;
 import com.green.attaparunever2.order.model.OrderSelDto;
+import com.green.attaparunever2.order.ticket.TicketMapper;
+import com.green.attaparunever2.order.ticket.model.TicketSelDto;
+import com.green.attaparunever2.reservation.ReservationMapper;
+import com.green.attaparunever2.reservation.model.ReservationDto;
 import com.green.attaparunever2.user.user_payment_member.model.*;
+import com.green.attaparunever2.user.user_payment_member.scheduler.TicketScheduler;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +17,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +31,9 @@ public class UserPaymentMemberService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserPaymentMemberScheduler userPaymentMemberScheduler;
     private final OrderMapper orderMapper;
+    private final TicketMapper ticketMapper;
+    private final ReservationMapper reservationMapper;
+    private final TicketScheduler ticketScheduler;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -74,16 +84,6 @@ public class UserPaymentMemberService {
             String msg = "결제정보 등록시 에러가 발생하였습니다.";
             throw new CustomException(msg, HttpStatus.BAD_REQUEST);
         }
-        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
-
-        // 예약 당사자를 제외한 나머지 인원에 알림 전송
-        if(orderSelDto.getUserId() != p.getUserId()) {
-            // 결재요청 인원에게 알림 전송
-            messagingTemplate.convertAndSend(
-                    "/queue/user/"+p.getUserId()+"/user/userPaymentMember",
-                    p
-            );
-        }
 
         return result;
     }
@@ -133,6 +133,18 @@ public class UserPaymentMemberService {
                 "/queue/restaurant/" + orderSelDto.getRestaurantId() + "/owner/reservation",
                 p
         );
+        
+        TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
+        ReservationDto reservationDto = reservationMapper.selReservationByOrderId(p.getOrderId());
+        LocalDateTime time = ticketDto.getCreatedAt();
+        
+        // 예약이 존재하는 경우 예약시간으로
+        if(reservationDto != null) {
+            time = reservationDto.getReservationTime();
+        }
+
+        // 식권생성 후 2 시간 후 결재 처리
+        ticketScheduler.scheduleCancellation(p.getOrderId(), time);
 
         return p.getTicketId();
     }
@@ -198,6 +210,8 @@ public class UserPaymentMemberService {
 
     @Transactional
     public int postPaymentMember(UserPostPaymentMemberReq req) {
+        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(req.getOrderId());
+
         // userId와 point 리스트의 길이가 일치하지 않으면 예외 처리
         if (req.getUserId().size() != req.getPoint().size()) {
             throw new CustomException("사용자 수와 금액 수가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
@@ -239,17 +253,20 @@ public class UserPaymentMemberService {
 
         // 저장에 성공하면 사용자에게 승인 요청을 보냄
         if(result >= 1) {
+
             List<UserPaymentMemberDto> userPaymentMemberDtoList = userPaymentMemberMapper.selUserPaymentMemberByOrderId(req.getOrderId());
 
             for(UserPaymentMemberDto user : userPaymentMemberDtoList) {
-                // 사장님 구독 경로로 예약 알림 메시지 전송
-                messagingTemplate.convertAndSend(
-                        "/queue/user/" + user.getUserId() + "/user/userPaymentMember",
-                        req
-                );
+                if(orderSelDto.getUserId() != user.getUserId()) {
+                    // 유저 구독 경로로 예약 알림 메시지 전송
+                    messagingTemplate.convertAndSend(
+                            "/queue/user/" + user.getUserId() + "/user/userPaymentMember",
+                            req
+                    );
 
-                // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
-                userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+                    // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
+                    userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+                }
             }
         }
         return result;

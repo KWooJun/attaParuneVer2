@@ -16,7 +16,7 @@ public interface OrderMapper {
     List<RestaurantOrderDto> selCompleteOrderListByRestaurantId(long restaurantId);
     List<OrderDetailDto> selOrderDetailByOrderId(long orderId);
 
-
     List<OrderDetailPostReq> getTotalPrice(long orderId);
     OrderSelDto selOrderByOrderId(long orderId);
+    long insReservationOrder(OrderPostReq p);
 }

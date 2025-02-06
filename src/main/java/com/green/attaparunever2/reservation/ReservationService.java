@@ -1,6 +1,7 @@
 package com.green.attaparunever2.reservation;
 
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.order.OrderMapper;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
 import com.green.attaparunever2.order.model.OrderDetailPostReq;
@@ -25,6 +26,7 @@ public class ReservationService {
     private final ReservationScheduler reservationScheduler;
     private final SimpMessagingTemplate messagingTemplate;
     private final OrderService orderService;
+    private final OrderMapper orderMapper;
     private final TicketMapper ticketMapper;
 
     @Transactional
@@ -63,7 +65,7 @@ public class ReservationService {
 //        orderData.setReservationYn(1);
 //        orderData.setReservationStatus(0);
 
-        long result = orderService.postOrder(orderData);
+        long result = orderMapper.insReservationOrder(orderData);
 
         if(result == 1) {
             createdOrderId = orderData.getOrderId();

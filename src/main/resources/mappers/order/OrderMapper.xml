@@ -171,4 +171,10 @@
         where order_id = #{orderId}
     </select>
 
+    <insert id="insReservationOrder" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO `order`
+        SET user_id = #{userId}
+        , restaurant_id = #{restaurantId}
+        , reservation_yn = 1
+    </insert>
 </mapper>

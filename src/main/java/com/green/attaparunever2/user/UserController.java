@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -121,6 +123,17 @@ public class UserController {
         return ResultResponse.<GetUserOrderVer2Res>builder()
                 .statusCode("200")
                 .resultMsg("주문 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @PutMapping("/upw")
+    @Operation(summary = "비밀번호 변경")
+    public ResultResponse<Integer> patchUpw(@Valid @RequestBody UserUpwPatchReq p) {
+        int res = userService.patchUpw(p);
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("비밀번호 변경이 완료되었습니다.")
                 .resultData(res)
                 .build();
     }

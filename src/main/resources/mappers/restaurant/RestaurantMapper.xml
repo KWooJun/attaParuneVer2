@@ -166,7 +166,7 @@
                 AND DATE_FORMAT(A.use_date, '%Y-%m-%d')
                 <![CDATA[ <= ]]>
                 #{endDate}
-            );
+            )
         LIMIT #{startIdx}, #{size}
     </select>
 

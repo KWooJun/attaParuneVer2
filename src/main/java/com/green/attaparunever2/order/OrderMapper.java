@@ -16,5 +16,6 @@ public interface OrderMapper {
     List<OrderDetailDto> selOrderDetailByOrderId(long orderId);
 
 
-    List<OrderDetailPostReq> getTotalPrice(long OrderId);
+    List<OrderDetailPostReq> getTotalPrice(long orderId);
+    OrderSelDto selOrderByOrderId(long orderId);
 }

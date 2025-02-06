@@ -1,6 +1,8 @@
 package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.model.OrderSelDto;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -20,6 +23,7 @@ public class UserPaymentMemberService {
     private final UserPaymentMemberMapper userPaymentMemberMapper;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserPaymentMemberScheduler userPaymentMemberScheduler;
+    private final OrderMapper orderMapper;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -70,9 +74,16 @@ public class UserPaymentMemberService {
             String msg = "결제정보 등록시 에러가 발생하였습니다.";
             throw new CustomException(msg, HttpStatus.BAD_REQUEST);
         }
+        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
 
-
-
+        // 예약 당사자를 제외한 나머지 인원에 알림 전송
+        if(orderSelDto.getUserId() != p.getUserId()) {
+            // 결재요청 인원에게 알림 전송
+            messagingTemplate.convertAndSend(
+                    "/queue/user/"+p.getUserId()+"/user/userPaymentMember",
+                    p
+            );
+        }
 
         return result;
     }
@@ -114,6 +125,14 @@ public class UserPaymentMemberService {
         }
 
         int result = userPaymentMemberMapper.insTicket(p);
+
+        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
+
+        // 사장님 구독 경로로 식권생성 완료 메세지 전송
+        messagingTemplate.convertAndSend(
+                "/queue/restaurant/" + orderSelDto.getRestaurantId() + "/owner/reservation",
+                p
+        );
 
         return p.getTicketId();
     }

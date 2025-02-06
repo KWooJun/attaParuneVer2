@@ -14,4 +14,6 @@ public interface AdminMapper {
     AdminMailVerificationDTO selAdminEmailVerificationByAdminId(long adminId);
     AdminMailVerificationDTO selAdminEmailVerificationByAId(String uId);
     int delAdminEmailVerification(long adminId);
+
+    int patchUpw(AdminUpwPatchReq p);
 }

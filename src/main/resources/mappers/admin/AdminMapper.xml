@@ -76,4 +76,14 @@
         DELETE FROM admin
         WHERE admin_id = #{adminId}
     </delete>
+
+    <update id="patchUpw">
+        UPDATE admin
+        <set>
+            <if test="newUpw != null and newUpw != ''">
+                apw = #{newUpw}
+            </if>
+        </set>
+        WHERE admin_id = #{adminId}
+    </update>
 </mapper>

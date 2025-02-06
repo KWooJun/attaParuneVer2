@@ -43,9 +43,9 @@ public class OrderController {
 
     @GetMapping
     @Operation(summary = "주문 조회")
-    public ResultResponse<OrderGetRes> getOrder(@ParameterObject @ModelAttribute OrderGetReq p) {
-        OrderGetRes res = service.getOrder(p);
-        return ResultResponse.<OrderGetRes>builder()
+    public ResultResponse<GetOrderRes> getOrder(@ParameterObject @ModelAttribute OrderGetReq p) {
+        GetOrderRes res = service.getOrder(p);
+        return ResultResponse.<GetOrderRes>builder()
                 .statusCode("200")
                 .resultMsg("주문 조회 완료")
                 .resultData(res)

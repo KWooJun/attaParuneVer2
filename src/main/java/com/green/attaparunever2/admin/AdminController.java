@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -93,5 +94,16 @@ public class AdminController {
     @Operation(summary = "엑세스 토큰 재발행")
     public String getAccessToken(HttpServletRequest req) {
         return adminService.getAccessToken(req);
+    }
+
+    @PutMapping("/upw")
+    @Operation(summary = "비밀번호 변경")
+    public ResultResponse<Integer> patchUpw(@Valid @RequestBody AdminUpwPatchReq p) {
+        int result = adminService.patchUpw(p);
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("비밀번호 변경이 완료되었습니다.")
+                .resultData(result)
+                .build();
     }
 }

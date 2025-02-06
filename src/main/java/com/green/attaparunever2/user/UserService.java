@@ -207,20 +207,6 @@ public class UserService {
 
     // 비밀번호 변경
     public int patchUpw(UserUpwPatchReq p) {
-//        p.setUserId(authenticationFacade.getSignedUserId());
-//        UserUpwPatchRes res = new UserUpwPatchRes();
-//
-//        if (p.getNewUpw() != null) {
-//            String hashedPassWord = BCrypt.hashpw(p.getNewUpw(), BCrypt.gensalt());
-//            p.setNewUpw(hashedPassWord);
-//        } else {
-//            throw new CustomException("비밀번호는 특수문자와 숫자를 포함한 8자 이상이어야 합니다.", HttpStatus.BAD_REQUEST);
-//        }
-//        int result = userMapper.patchUpw(p);
-//        res.setMessage("비밀번호 수정이 완료되었습니다.");
-//        res.setResult(result);
-//        return res;
-
         p.setUserId(authenticationFacade.getSignedUserId());
 
         // 신규 비밀번호 유효성 검사

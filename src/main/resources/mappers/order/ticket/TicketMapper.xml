@@ -61,7 +61,7 @@
         INNER JOIN user_payment_member H
         ON C.order_id = H.order_id
         WHERE G.ticket_id = #{ticketId}
-        GROUP BY C.order_id
+        GROUP BY C.order_id;
     </select>
 
     <delete id="delTicket">

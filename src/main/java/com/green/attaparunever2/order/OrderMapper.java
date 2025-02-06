@@ -18,4 +18,5 @@ public interface OrderMapper {
 
     List<OrderDetailPostReq> getTotalPrice(long orderId);
     OrderSelDto selOrderByOrderId(long orderId);
+    long insReservationOrder(OrderPostReq p);
 }

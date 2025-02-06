@@ -3,7 +3,12 @@ package com.green.attaparunever2.user.user_payment_member;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.order.OrderMapper;
 import com.green.attaparunever2.order.model.OrderSelDto;
+import com.green.attaparunever2.order.ticket.TicketMapper;
+import com.green.attaparunever2.order.ticket.model.TicketSelDto;
+import com.green.attaparunever2.reservation.ReservationMapper;
+import com.green.attaparunever2.reservation.model.ReservationDto;
 import com.green.attaparunever2.user.user_payment_member.model.*;
+import com.green.attaparunever2.user.user_payment_member.scheduler.TicketScheduler;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +17,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +31,9 @@ public class UserPaymentMemberService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserPaymentMemberScheduler userPaymentMemberScheduler;
     private final OrderMapper orderMapper;
+    private final TicketMapper ticketMapper;
+    private final ReservationMapper reservationMapper;
+    private final TicketScheduler ticketScheduler;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -133,6 +143,18 @@ public class UserPaymentMemberService {
                 "/queue/restaurant/" + orderSelDto.getRestaurantId() + "/owner/reservation",
                 p
         );
+        
+        TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
+        ReservationDto reservationDto = reservationMapper.selReservationByOrderId(p.getOrderId());
+        LocalDateTime time = ticketDto.getCreatedAt();
+        
+        // 예약이 존재하는 경우 예약시간으로
+        if(reservationDto != null) {
+            time = reservationDto.getReservationTime();
+        }
+
+        // 식권생성 후 2 시간 후 결재 처리
+        ticketScheduler.scheduleCancellation(p.getOrderId(), time);
 
         return p.getTicketId();
     }

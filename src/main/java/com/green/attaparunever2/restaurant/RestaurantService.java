@@ -191,9 +191,13 @@ public class RestaurantService {
 
         if(dayPoint != null) {
             res.setDayPoint(dayPoint.getTotalPoint());
+        } else {
+            res.setDayPoint(0);
         }
         if(monthPoint != null) {
             res.setMonthPoint(monthPoint.getTotalPoint());
+        } else {
+            res.setMonthPoint(0);
         }
 
         // 주간 예약 현황 받아옴

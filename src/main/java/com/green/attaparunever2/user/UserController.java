@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,5 +111,17 @@ public class UserController {
                 .resultData(resList)
                 .build();
 
+    }
+
+    @GetMapping("order")
+    @Operation(summary = "로그인한 사용자 본인의 진행중인 주문 조회")
+    public ResultResponse<List<GetUserOrderVer2Res>> getUserOrder(@ParameterObject GetUserOrderVer2Req p) {
+        List<GetUserOrderVer2Res> res = userService.getUserOrder(p);
+
+        return ResultResponse.<List<GetUserOrderVer2Res>>builder()
+                .statusCode("200")
+                .resultMsg("주문 조회 완료")
+                .resultData(res)
+                .build();
     }
 }

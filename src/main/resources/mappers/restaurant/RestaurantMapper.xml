@@ -143,4 +143,67 @@
         AND category_id = #{categoryId}
         LIMIT #{startIdx}, #{size}
     </select>
+
+    <!-- 사장님 페이지 매출 내역 -->
+    <select id="selRestaurantPointByCreatedAt">
+        SELECT B.order_id AS orderId, B.created_at AS createdAt, C.user_id AS userId, C.name AS userName
+        , B.reservation_yn AS reservationYn, IF(B.reservation_yn = 1, '예약 주문', '앉아서 주문') AS reservationYnStr, B.restaurant_id AS restaurantId
+        , (
+            SELECT SUM(`point`)
+            FROM user_payment_member
+            WHERE order_id = B.order_id
+        ) AS `point`
+        FROM ticket A INNER JOIN `order` B
+            ON A.order_id = B.order_id
+        INNER JOIN user C
+            ON B.user_id = C.user_id
+        WHERE A.ticket_status = 1
+            AND B.restaurant_id = #{restaurantId}
+            AND (
+                DATE_FORMAT(A.use_date, '%Y-%m-%d')
+                <![CDATA[ >= ]]>
+                #{startDate}
+                AND DATE_FORMAT(A.use_date, '%Y-%m-%d')
+                <![CDATA[ <= ]]>
+                #{endDate}
+            );
+    </select>
+
+    <!-- 식당 일일 총 매출 -->
+    <select id="selRestaurantDayPoint">
+        SELECT C.restaurant_id, SUM(B.point) AS totalPoint
+        FROM ticket A INNER JOIN user_payment_member B
+        ON A.order_id = B.order_id
+        INNER JOIN `order` C
+        ON A.order_id = C.order_id
+        WHERE A.ticket_status = 1
+        AND C.restaurant_id = #{restaurantId}
+        AND DATE(A.use_date) = #{date}
+        GROUP BY C.restaurant_id
+    </select>
+
+    <!-- 식당 월별 총 매출 -->
+    <select id="selRestaurantMonthPoint">
+        SELECT C.restaurant_id, SUM(B.point) AS totalPoint
+        FROM ticket A INNER JOIN user_payment_member B
+        ON A.order_id = B.order_id
+        INNER JOIN `order` C
+        ON A.order_id = C.order_id
+        WHERE A.ticket_status = 1
+        AND C.restaurant_id = #{restaurantId}
+        AND DATE_FORMAT(A.use_date, '%Y-%m') = DATE_FORMAT(#{date}, '%Y-%m')
+        GROUP BY C.restaurant_id
+    </select>
+
+    <!-- 식당 주간 주문 내역 -->
+    <select id="selRestaurantWeekOrderCount">
+        SELECT DATE(created_at) AS date,
+        COUNT(CASE WHEN reservation_yn = 0 THEN 1 END) AS reservationOrders,
+        COUNT(CASE WHEN reservation_yn = 1 THEN 1 END) AS seatedOrders
+        FROM `order`
+        WHERE DATE(created_at) BETWEEN #{startDate} AND #{endDate}
+        AND restaurant_id = #{restaurantId}
+        GROUP BY DATE(created_at)
+        ORDER BY DATE(created_at)
+    </select>
 </mapper>

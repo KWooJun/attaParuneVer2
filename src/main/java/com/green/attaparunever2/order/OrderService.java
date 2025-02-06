@@ -1,9 +1,11 @@
 package com.green.attaparunever2.order;
 
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.order.model.*;
 import com.green.attaparunever2.order.ticket.TicketMapper;
 import com.green.attaparunever2.order.ticket.TicketService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderMapper mapper;
-    private final TicketMapper ticketMapper;
-    private final TicketService ticketService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final AuthenticationFacade authenticationFacade;
 
     public long postOrder(OrderPostReq p) {
         return mapper.postOrder(p);
@@ -28,17 +30,14 @@ public class OrderService {
     }
 
     @Transactional
-    public long postOrderWithDetail(OrderPostReq orderReq) {
-        long orderId = mapper.postOrder(orderReq);
+    public long postOrderWithDetail(OrderPostReq p) {
+        long orderId = mapper.postOrder(p);
 
-        int totalPrice = 0;
-        for (OrderDetailPostReq detailReq : orderReq.getOrderDetails()) {
-            detailReq.setOrderId(orderId);
-            int itemPrice = detailReq.getMenuCount() * detailReq.getPrice();
-            totalPrice += itemPrice;
+        for (OrderDetailPostReq detailReq : p.getOrderDetails()) {
+            detailReq.setOrderId(p.getOrderId());
             mapper.postOrderDetail(detailReq);
         }
-        return totalPrice;
+        return orderId;
     }
 
     public int updOrderAccess(OrderAccessPatchReq p) {
@@ -84,4 +83,6 @@ public class OrderService {
 
         return orderList;
     }
+
+
 }

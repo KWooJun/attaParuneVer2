@@ -84,16 +84,6 @@ public class UserPaymentMemberService {
             String msg = "결제정보 등록시 에러가 발생하였습니다.";
             throw new CustomException(msg, HttpStatus.BAD_REQUEST);
         }
-        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
-
-        // 예약 당사자를 제외한 나머지 인원에 알림 전송
-        if(orderSelDto.getUserId() != p.getUserId()) {
-            // 결재요청 인원에게 알림 전송
-            messagingTemplate.convertAndSend(
-                    "/queue/user/"+p.getUserId()+"/user/userPaymentMember",
-                    p
-            );
-        }
 
         return result;
     }
@@ -220,6 +210,8 @@ public class UserPaymentMemberService {
 
     @Transactional
     public int postPaymentMember(UserPostPaymentMemberReq req) {
+        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(req.getOrderId());
+
         // userId와 point 리스트의 길이가 일치하지 않으면 예외 처리
         if (req.getUserId().size() != req.getPoint().size()) {
             throw new CustomException("사용자 수와 금액 수가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
@@ -261,17 +253,20 @@ public class UserPaymentMemberService {
 
         // 저장에 성공하면 사용자에게 승인 요청을 보냄
         if(result >= 1) {
+
             List<UserPaymentMemberDto> userPaymentMemberDtoList = userPaymentMemberMapper.selUserPaymentMemberByOrderId(req.getOrderId());
 
             for(UserPaymentMemberDto user : userPaymentMemberDtoList) {
-                // 사장님 구독 경로로 예약 알림 메시지 전송
-                messagingTemplate.convertAndSend(
-                        "/queue/user/" + user.getUserId() + "/user/userPaymentMember",
-                        req
-                );
+                if(orderSelDto.getUserId() != user.getUserId()) {
+                    // 유저 구독 경로로 예약 알림 메시지 전송
+                    messagingTemplate.convertAndSend(
+                            "/queue/user/" + user.getUserId() + "/user/userPaymentMember",
+                            req
+                    );
 
-                // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
-                userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+                    // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
+                    userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+                }
             }
         }
         return result;

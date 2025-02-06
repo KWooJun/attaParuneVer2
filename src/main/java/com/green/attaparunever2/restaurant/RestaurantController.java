@@ -22,10 +22,10 @@ public class RestaurantController {
 
     @PostMapping
     @Operation(summary = "식당 등록")
-    public ResultResponse<InsRestaurantRes> postRestaurant(@RequestPart List<MultipartFile> filePath, @RequestPart InsRestaurantReq p){
-        InsRestaurantRes result = restaurantService.postRestaurant(filePath, p);
+    public ResultResponse<Integer> postRestaurant(@RequestBody InsRestaurantReq p){
+        int result = restaurantService.postRestaurant(p);
 
-        return ResultResponse.<InsRestaurantRes>builder()
+        return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("식당 등록 성공")
                 .resultData(result)

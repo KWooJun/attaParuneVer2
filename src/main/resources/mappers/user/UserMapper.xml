@@ -146,4 +146,14 @@
         WHERE C.user_id = #{signedUserId}
         GROUP BY B.order_detail_id
     </select>
+
+    <update id="patchUpw">
+        UPDATE user
+        <set>
+            <if test="newUpw != null and newUpw != ''">
+                upw = #{newUpw}
+            </if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
 </mapper>

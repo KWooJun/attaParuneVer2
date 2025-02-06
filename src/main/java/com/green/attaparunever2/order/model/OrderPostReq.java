@@ -33,4 +33,5 @@ public class OrderPostReq {
 //    private int reservationStatus;
 
     private List<OrderDetailPostReq> orderDetails;
+
 }

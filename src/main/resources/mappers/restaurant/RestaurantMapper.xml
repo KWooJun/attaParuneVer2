@@ -167,6 +167,7 @@
                 <![CDATA[ <= ]]>
                 #{endDate}
             );
+        LIMIT #{startIdx}, #{size}
     </select>
 
     <!-- 식당 일일 총 매출 -->

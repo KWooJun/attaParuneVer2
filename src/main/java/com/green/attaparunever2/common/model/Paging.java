@@ -14,7 +14,7 @@ public class Paging {
 
     @Schema(example = "1", description = "Selected Page")
     private Integer page;
-    @Schema(example = "30", description = "item count per page")
+    @Schema(example = "15", description = "item count per page")
     private Integer size;
     @JsonIgnore
     private int startIdx;

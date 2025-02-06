@@ -193,14 +193,12 @@ public class UserService {
         return res;
     }
 
-    public List<GetUserOrderVer2Res> getUserOrder(GetUserOrderVer2Req p) {
+    public GetUserOrderVer2Res getUserOrder(GetUserOrderVer2Req p) {
         //p.setSignedUserId(authenticationFacade.getSignedUserId());
-        List<GetUserOrderVer2Res> res =  userMapper.getUserOrderVer2(p);
+        GetUserOrderVer2Res res =  userMapper.getUserOrderVer2(p);
         List<GetUserOrderMenuListDto> list = userMapper.getUserOrderVer2MenuList(p);
 
-        for (GetUserOrderVer2Res r : res) {
-            r.setMenuList(list);
-        }
+        res.setMenuList(list);
 
         return res;
     }

@@ -17,6 +17,6 @@ public interface UserMapper {
     UserMailVerificationDTO selUserEmailVerificationByUId(String uId);
     int delUserEmailVerification(long userId);
     List<SelUserOrderPastCheckRes> selUserPastOrderCheck(SelUserOrderPastCheckReq p);
-    List<GetUserOrderVer2Res> getUserOrderVer2(GetUserOrderVer2Req p);
+    GetUserOrderVer2Res getUserOrderVer2(GetUserOrderVer2Req p);
     List<GetUserOrderMenuListDto> getUserOrderVer2MenuList(GetUserOrderVer2Req p);
 }

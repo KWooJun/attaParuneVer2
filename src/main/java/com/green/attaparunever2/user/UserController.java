@@ -115,10 +115,10 @@ public class UserController {
 
     @GetMapping("order")
     @Operation(summary = "로그인한 사용자 본인의 진행중인 주문 조회")
-    public ResultResponse<List<GetUserOrderVer2Res>> getUserOrder(@ParameterObject GetUserOrderVer2Req p) {
-        List<GetUserOrderVer2Res> res = userService.getUserOrder(p);
+    public ResultResponse<GetUserOrderVer2Res> getUserOrder(@ParameterObject GetUserOrderVer2Req p) {
+        GetUserOrderVer2Res res = userService.getUserOrder(p);
 
-        return ResultResponse.<List<GetUserOrderVer2Res>>builder()
+        return ResultResponse.<GetUserOrderVer2Res>builder()
                 .statusCode("200")
                 .resultMsg("주문 조회 완료")
                 .resultData(res)

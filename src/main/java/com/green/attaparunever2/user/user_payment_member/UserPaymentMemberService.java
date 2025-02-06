@@ -230,7 +230,6 @@ public class UserPaymentMemberService {
             Long userId = userIds.get(i);
             int requestedPoint = req.getPoint().get(i); // 요청된 포인트 (user_payment_member 테이블에 저장될 포인트)
             int userTablePoint = userPoints.get(i).getPoint(); // user 테이블에서 조회한 포인트
-
             // 요청된 포인트가 user 테이블의 포인트를 초과하면 예외 처리
             if (requestedPoint > userTablePoint) {
                 throw new CustomException("현재 보유 금액보다 결제 금액이 큽니다.", HttpStatus.BAD_REQUEST);
@@ -241,11 +240,16 @@ public class UserPaymentMemberService {
         List<PostPaymentUserIdAndPoint> paymentMembers = new ArrayList<>();
         for (int i = 0; i < req.getUserId().size(); i++) {
             // Long -> long, Integer -> int로 변환하여 PostPaymentUserIdAndPoint 객체 생성
+
+            int status = orderSelDto.getUserId() == req.getUserId().get(i).longValue() ? 1: 0;
+            log.info("asdasdasdasd: {}", status);
             paymentMembers.add(new PostPaymentUserIdAndPoint(
                     req.getOrderId(),
                     req.getUserId().get(i).longValue(),  // Long -> long
-                    req.getPoint().get(i).intValue()     // Integer -> int
+                    req.getPoint().get(i).intValue(),     // Integer -> int
+                    status
             ));
+
         }
 
         // 변환된 리스트를 매퍼로 전달

@@ -63,7 +63,7 @@ public class ReservationService {
 //        orderData.setReservationYn(1);
 //        orderData.setReservationStatus(0);
 
-        int result = orderService.postOrder(orderData);
+        long result = orderService.postOrder(orderData);
 
         if(result == 1) {
             createdOrderId = orderData.getOrderId();

@@ -19,7 +19,6 @@
 <!--    <select id="getTicket">-->
 <!--        SELECT-->
 <!--        D.restaurant_name AS restaurantName,-->
-<!--        B.point,-->
 <!--        SUM(OD.menu_count) AS menuCount,-->
 <!--        SUM(OD.menu_count * OD.price) AS totalOrderAmount,-->
 <!--        E.reservation_people_count AS personCount,-->
@@ -32,11 +31,11 @@
 <!--        ON C.order_id = OD.order_id-->
 <!--        LEFT JOIN reservation E-->
 <!--        ON C.order_id = E.order_id-->
-<!--        INNER JOIN user_payment_member B-->
-<!--        ON C.order_id = B.order_id-->
 <!--        INNER JOIN restaurant_menu F-->
 <!--        ON OD.menu_id = F.menu_id-->
-<!--        WHERE C.order_id = #{orderId}-->
+<!--        INNER JOIN ticket G-->
+<!--        ON C.order_id = G.order_id-->
+<!--        WHERE G.ticket_id = #{ticketId}-->
 <!--        GROUP BY C.order_id-->
 <!--    </select>-->
 
@@ -44,7 +43,7 @@
         SELECT
         D.restaurant_name AS restaurantName,
         SUM(OD.menu_count) AS menuCount,
-        SUM(OD.menu_count * OD.price) AS totalOrderAmount,
+        SUM(H.`point`) AS totalAmount,
         E.reservation_people_count AS personCount,
         E.reservation_time AS reservationTime,
         GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuNames
@@ -59,6 +58,8 @@
         ON OD.menu_id = F.menu_id
         INNER JOIN ticket G
         ON C.order_id = G.order_id
+        INNER JOIN user_payment_member H
+        ON C.order_id = H.order_id
         WHERE G.ticket_id = #{ticketId}
         GROUP BY C.order_id
     </select>

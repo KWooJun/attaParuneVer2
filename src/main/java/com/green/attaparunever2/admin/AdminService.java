@@ -8,6 +8,7 @@ import com.green.attaparunever2.config.CookieUtils;
 import com.green.attaparunever2.config.constant.JwtConst;
 import com.green.attaparunever2.config.jwt.JwtTokenProvider;
 import com.green.attaparunever2.config.jwt.JwtUser;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.admin.model.AdminMailVerificationDTO;
 import com.green.attaparunever2.user.MailSendService;
@@ -34,6 +35,7 @@ public class AdminService {
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtils cookieUtils;
     private final JwtConst jwtConst;
+    private final AuthenticationFacade authenticationFacade;
 
     // 관리자 회원가입
     @Transactional
@@ -186,5 +188,20 @@ public class AdminService {
         String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
 
         return accessToken;
+    }
+
+    // 비밀번호 변경
+    public int patchUpw(AdminUpwPatchReq p) {
+        p.setAdminId(authenticationFacade.getSignedUserId());
+
+        if (p.getNewUpw() == null || !p.getNewUpw().matches("^(?=.*[0-9])(?=.*[!@#$%^&*()-_=+\\\\\\\\|\\\\[{\\\\]};:'\\\",<.>/?]).{8,}$")) {
+            throw new CustomException("비밀번호는 특수문자와 숫자를 포함한 8자 이상이어야 합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        String hashedPassWord = BCrypt.hashpw(p.getNewUpw(), BCrypt.gensalt());
+        p.setNewUpw(hashedPassWord);
+
+        int result = adminMapper.patchUpw(p);
+        return result;
     }
 }

@@ -27,40 +27,39 @@
     </select>
 
     <select id="getOrder">
-        SELECT
-        A.order_id AS orderId,
-        A.user_id AS userId,
-        A.reservation_yn AS reservationYn,
-        A.reservation_status AS reservationStatus,
-        A.created_at AS orderDate,
-        R.reservation_id AS reservationId,
-        R.reservation_time AS reservationTime,
-        R.reservation_people_count AS reservationPeopleCount,
-        R.reservation_cancel_reason AS reservationCancelReason,
-        R.user_phone AS userPhone,
-        R.created_at AS reservationCreatedAt,
-        SUM(B.menu_count * C.price) AS totalPrice
-        FROM `order` A
-        LEFT JOIN order_detail B
-        ON A.order_id = B.order_id
-        LEFT JOIN restaurant_menu C
-        ON B.menu_id = C.menu_id
-        LEFT JOIN reservation R
-        ON A.order_id = R.order_id
-        WHERE A.order_id = #{orderId}
-        GROUP BY A.order_id
+        SELECT A.order_id AS orderId
+             , A.user_id AS userId
+             , A.reservation_yn AS reservationYn
+             , A.reservation_status AS reservationStatus
+             , A.created_at AS orderDate
+             , R.reservation_id AS reservationId
+             , R.reservation_time AS reservationTime
+             , R.reservation_people_count AS reservationPeopleCount
+             , R.reservation_cancel_reason AS reservationCancelReason
+             , R.user_phone AS userPhone
+             , R.created_at AS reservationCreatedAt
+             , SUM(B.menu_count * C.price) AS totalPrice
+          FROM `order` A
+          LEFT JOIN order_detail B
+            ON A.order_id = B.order_id
+          LEFT JOIN restaurant_menu C
+            ON B.menu_id = C.menu_id
+          LEFT JOIN reservation R
+            ON A.order_id = R.order_id
+         WHERE A.order_id = #{orderId}
+         GROUP BY A.order_id
     </select>
-    
+
     <select id="getOrderList">
-        SELECT B.menu_id AS menuId,
-        B.menu_count AS menuCount,
-        B.price,
-        C.menu_name AS menuName,
-        B.price * B.menu_count AS menuPrice
-        FROM order_detail B
-        LEFT JOIN restaurant_menu C
-        ON B.menu_id = C.menu_id
-        WHERE B.order_id = #{orderId}
+        SELECT B.menu_id AS menuId
+             , B.menu_count AS menuCount
+             , B.price
+             , C.menu_name AS menuName
+             , B.price * B.menu_count AS menuPrice
+          FROM order_detail B
+          LEFT JOIN restaurant_menu C
+            ON B.menu_id = C.menu_id
+         WHERE B.order_id = #{orderId}
     </select>
 
     <update id="updOrderAccess">

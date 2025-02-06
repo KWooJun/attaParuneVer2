@@ -194,7 +194,7 @@ public class UserService {
     }
 
     public List<GetUserOrderVer2Res> getUserOrder(GetUserOrderVer2Req p) {
-        //p.setSignedUserId(authenticationFacade.getSignedUserId());
+        p.setSignedUserId(authenticationFacade.getSignedUserId());
         List<GetUserOrderVer2Res> res =  userMapper.getUserOrderVer2(p);
         List<GetUserOrderMenuListDto> list = userMapper.getUserOrderVer2MenuList(p);
 
@@ -204,4 +204,23 @@ public class UserService {
 
         return res;
     }
+
+    // 비밀번호 변경
+    public int patchUpw(UserUpwPatchReq p) {
+        p.setUserId(authenticationFacade.getSignedUserId());
+
+        // 신규 비밀번호 유효성 검사
+        if (p.getNewUpw() == null || !p.getNewUpw().matches("^(?=.*[0-9])(?=.*[!@#$%^&*()-_=+\\\\\\\\|\\\\[{\\\\]};:'\\\",<.>/?]).{8,}$")) {
+            throw new CustomException("비밀번호는 특수문자와 숫자를 포함한 8자 이상이어야 합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 비밀번호 해싱
+        String hashedPassWord = BCrypt.hashpw(p.getNewUpw(), BCrypt.gensalt());
+        p.setNewUpw(hashedPassWord);
+
+        // 비밀번호 변경
+        int result = userMapper.patchUpw(p);
+        return result;
+    }
+
 }

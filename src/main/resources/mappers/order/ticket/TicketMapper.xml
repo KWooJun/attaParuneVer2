@@ -94,5 +94,4 @@
         FROM ticket
         WHERE ticket_id = #{ticketId}
     </select>
-    
 </mapper>

@@ -115,6 +115,7 @@ public class RestaurantService {
         p.setSysMaxLat(maxLatitude);
         p.setSysMaxLng(maxLongitude);
 
+
         log.info("aiobhdfibhfdibhi {} asda {} asdasd", p.getSysMinLat(), p.getSysMinLng());
         log.info("asdasifjaisfjasi {} {}", p.getSysMaxLat(), p.getSysMaxLng());
 

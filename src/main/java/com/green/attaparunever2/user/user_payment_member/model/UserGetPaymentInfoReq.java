@@ -13,4 +13,6 @@ public class UserGetPaymentInfoReq {
     private long userId;
     @Schema(description = "주문 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private long orderId;
+    @Schema(description = "주문한 사용자 PK",example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    private long orderUserId;
 }

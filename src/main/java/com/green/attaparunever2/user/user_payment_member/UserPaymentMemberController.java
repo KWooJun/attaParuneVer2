@@ -115,11 +115,11 @@ public class UserPaymentMemberController {
 
     @GetMapping("getPaymentInfo")
     @Operation(summary = "내게 온 결제 승인 요청 정보를 조회한다.")
-    public ResultResponse<UserGetPaymentInfoRes> getPaymentInfo(@ModelAttribute UserGetPaymentInfoReq p) {
+    public ResultResponse<UserGetPaymentInfoRes> getPaymentInfo(@ParameterObject UserGetPaymentInfoReq p) {
         UserGetPaymentInfoRes result = userPaymentMemberService.getPaymentInfo(p);
 
         return ResultResponse.<UserGetPaymentInfoRes>builder()
-                .statusCode(HttpStatus.OK.toString())
+                .statusCode("200")
                 .resultMsg("내게 온 결제 승인요청 정보조회 완료.")
                 .resultData(result)
                 .build();

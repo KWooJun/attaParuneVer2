@@ -16,6 +16,16 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="selTicketOne">
+        SELECT B.ticket_id
+        FROM `order` A
+        INNER JOIN ticket B
+        ON A.order_id = B.order_id
+        WHERE user_id = #{userId}
+        ORDER BY B.created_at DESC
+        LIMIT 1;
+    </select>
+
 <!--    <select id="getTicket">-->
 <!--        SELECT-->
 <!--        D.restaurant_name AS restaurantName,-->

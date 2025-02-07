@@ -130,6 +130,7 @@
         GROUP BY F.order_id
     </select>
 
+
     <select id="getUserOrderVer2MenuList">
         SELECT
         B.order_detail_id AS orderDetailId,

@@ -2,15 +2,12 @@ package com.green.attaparunever2.order;
 
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.order.model.*;
-import com.green.attaparunever2.order.ticket.TicketMapper;
-import com.green.attaparunever2.order.ticket.TicketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j

@@ -78,37 +78,35 @@
     </select>
     
     <update id="updRestaurant">
-        UPDATE restaurant A
-         INNER JOIN restaurant_pic B
-            ON A.restaurant_id = B.restaurant_id
+        UPDATE restaurant
             <set>
                 <if test=" restaurantName != null and restaurantName != '' ">
-                    A.restaurant_name = #{restaurantName}
+                      restaurant_name = #{restaurantName}
                 </if>
                 <if test=" restaurantAddress != null and restaurantAddress != '' ">
-                    , A.restaurant_address = #{restaurantAddress}
+                    , restaurant_address = #{restaurantAddress}
                 </if>
                 <if test=" restaurantNumber != null and restaurantNumber != '' ">
-                    , A.restaurant_number = #{restaurantNumber}
+                    , restaurant_number = #{restaurantNumber}
                 </if>
                 <if test=" operatingHours != null and operatingHours != '' ">
-                    , A.operating_hours = #{operatingHours}
+                    , operating_hours = #{operatingHours}
                 </if>
-                    , A.restaurant_description = #{restaurantDescription}
+                    , restaurant_description = #{restaurantDescription}
                 <if test=" status != null and status != '' ">
-                    , A.`status` = #{status}
+                    , `status` = #{status}
                 </if>
                 <if test=" maxCapacity != null and maxCapacity != '' ">
-                    , A.max_capacity = #{maxCapacity}
+                    , max_capacity = #{maxCapacity}
                 </if>
                 <if test=" lat != null and lat != '' ">
-                    , A.lat = #{lat}
+                    , lat = #{lat}
                 </if>
                 <if test=" lng != null and lng != '' ">
-                    , A.lng = #{lng}
+                    , lng = #{lng}
                 </if>
             </set>
-         WHERE A.restaurant_id = #{restaurantId}
+         WHERE restaurant_id = #{restaurantId}
     </update>
     
     <update id="updHoliday">

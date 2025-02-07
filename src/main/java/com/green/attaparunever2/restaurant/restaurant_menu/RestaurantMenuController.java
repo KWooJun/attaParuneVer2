@@ -1,6 +1,7 @@
 package com.green.attaparunever2.restaurant.restaurant_menu;
 
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.restaurant.restaurant_menu.model.PostMenuReq;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +19,7 @@ public class RestaurantMenuController {
 
     @PostMapping
     @Operation(summary = "메뉴 등록")
-    public ResultResponse<Integer> postMenu(@RequestPart InsMenuReq p
+    public ResultResponse<Integer> postMenu(@RequestPart PostMenuReq p
                                             , @RequestPart(required = false) MultipartFile pic){
 
         int result = restaurantMenuService.postMenu(pic, p);

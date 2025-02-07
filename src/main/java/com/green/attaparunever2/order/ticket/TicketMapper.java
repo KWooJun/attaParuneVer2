@@ -11,4 +11,5 @@ public interface TicketMapper {
     TicketSelDto selTicketByOrderId(long orderId);
     int updTicket(long ticketId);
     TicketUseDateSelRes selTicketUseDate(long ticketId);
+    SelTicketDto selTicketByTicketId(long ticketId);
 }

@@ -1,6 +1,7 @@
 package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.order.OrderMapper;
 import com.green.attaparunever2.order.model.OrderSelDto;
 import com.green.attaparunever2.order.ticket.TicketMapper;
@@ -34,6 +35,7 @@ public class UserPaymentMemberService {
     private final TicketMapper ticketMapper;
     private final ReservationMapper reservationMapper;
     private final TicketScheduler ticketScheduler;
+    private final AuthenticationFacade authenticationFacade;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -191,6 +193,7 @@ public class UserPaymentMemberService {
 
     //내게 온 결제 승인요청 정보조회
     public UserGetPaymentInfoRes getPaymentInfo(UserGetPaymentInfoReq p) {
+        p.setOrderUserId(authenticationFacade.getSignedUserId());
         UserGetPaymentInfoRes result = null;
         try {
             /*

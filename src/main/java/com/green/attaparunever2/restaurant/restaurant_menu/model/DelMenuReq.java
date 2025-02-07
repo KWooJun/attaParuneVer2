@@ -8,6 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DelMenuReq {
+    @Schema(title = "카테고리 PK", example = "1")
+    private long categoryId;
     @Schema(title = "메뉴 PK", example = "10")
     private long menuId;
 }

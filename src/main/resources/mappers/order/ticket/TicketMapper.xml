@@ -94,4 +94,10 @@
         FROM ticket
         WHERE ticket_id = #{ticketId}
     </select>
+
+    <select id="selTicketByTicketId">
+        SELECT ticket_id AS ticketId, order_id AS orderId, expired_date AS expiredDate, ticket_status AS ticketStatus, use_date AS useDate
+        FROM ticket
+        WHERE ticket_id = #{ticketId}
+    </select>
 </mapper>

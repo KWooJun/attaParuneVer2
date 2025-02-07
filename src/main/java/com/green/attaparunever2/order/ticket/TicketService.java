@@ -4,6 +4,7 @@ import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.order.ticket.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketService {
     private final TicketMapper mapper;
     private final TicketMapper ticketMapper;
+    private final SimpMessagingTemplate messagingTemplate;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 
@@ -80,6 +82,14 @@ public class TicketService {
         if (result == 0) {
             throw new CustomException("식권 사용에 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
+
+        SelTicketDto dto = ticketMapper.selTicketByTicketId(ticketId);
+
+        // 사용자에게 식권사용 완료 메세지 전송
+        messagingTemplate.convertAndSend(
+                "/queue/reservation/" + dto.getOrderId() + "/user/reservation",
+                dto
+        );
 
         return result;
     }

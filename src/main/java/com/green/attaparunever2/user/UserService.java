@@ -221,4 +221,10 @@ public class UserService {
         return result;
     }
 
+    public long getSignedUserGetOrder(long userId){
+        long result = userMapper.getSignedUserGetOrder(userId);
+
+        return result;
+    }
+
 }

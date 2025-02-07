@@ -157,4 +157,12 @@
         </set>
         WHERE user_id = #{userId}
     </update>
+
+    <select id="getSignedUserGetOrder">
+        SELECT order_id AS orderId
+        FROM `order`
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+        LIMIT 1
+    </select>
 </mapper>

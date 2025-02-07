@@ -22,10 +22,10 @@ public class RestaurantController {
 
     @PostMapping
     @Operation(summary = "식당 등록")
-    public ResultResponse<Integer> postRestaurant(@RequestBody InsRestaurantReq p){
-        int result = restaurantService.postRestaurant(p);
+    public ResultResponse<Long> postRestaurant(@RequestBody InsRestaurantReq p){
+        Long result = restaurantService.postRestaurant(p);
 
-        return ResultResponse.<Integer>builder()
+        return ResultResponse.<Long>builder()
                 .statusCode("200")
                 .resultMsg("식당 등록 성공")
                 .resultData(result)

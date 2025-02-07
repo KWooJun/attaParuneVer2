@@ -278,7 +278,7 @@ public class UserPaymentMemberService {
                     );
 
                     // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
-                    userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+                    //userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
                 }
             }
         }

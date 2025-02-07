@@ -70,7 +70,20 @@ public class RestaurantMenuService {
     }
 
     public int delMenu(DelMenuReq p){
-        return restaurantMenuMapper.delMenu(p);
+        int result = restaurantMenuMapper.delMenu(p);
+
+        if(result != 0) {
+            int count = restaurantMenuMapper.selCategoryMenuCount(p.getCategoryId());
+
+            if(count <= 0) {
+                DelCategoryReq req = new DelCategoryReq();
+                req.setCategoryId(p.getCategoryId());
+                result = restaurantMenuMapper.delCategory(req);
+            }
+
+        }
+
+        return result;
     }
 
     @Transactional

@@ -83,4 +83,10 @@
         LIMIT 1
     </select>
 
+    <select id="selCategoryMenuCount">
+        SELECT COUNT(*)
+        FROM restaurant_menu
+        WHERE category_id = #{categoryId}
+    </select>
+
 </mapper>

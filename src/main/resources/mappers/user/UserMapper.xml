@@ -165,4 +165,30 @@
         ORDER BY created_at DESC
         LIMIT 1
     </select>
+
+    <select id="selUserReservationAlertByUserId">
+        SELECT A.reservation_id AS reservationId, A.reservation_time AS reservationTime
+        , A.reservation_people_count AS reservationPeopleCount, B.reservation_status AS reservationStatus
+        , B.restaurant_id AS restaurantId, C.restaurant_name AS restaurantName, A.order_id AS orderId
+        FROM reservation A INNER JOIN `order` B
+        ON A.order_id = B.order_id
+        INNER JOIN restaurant C
+        ON B.restaurant_id = C.restaurant_id
+        WHERE B.user_id = #{userId}
+        AND B.reservation_status = 1
+        AND A.order_id = (
+        SELECT D.order_id FROM ticket D WHERE D.order_id = A.order_id
+        )
+    </select>
+
+    <select id="selUserPaymentAlertByUserId">
+        SELECT B.user_id AS orderUserId, C.`name`  AS orderUserName, A.order_id AS orderId
+        , A.approval_status AS approvalStarus, A.`point`, A.created_at AS paymentCreatedAt
+        FROM user_payment_member A INNER JOIN `order` B
+        ON A.order_id = B.order_id
+        INNER JOIN `user` C
+        ON B.user_id = C.user_id
+        WHERE A.approval_status = 0
+        AND A.user_id = #{userId}
+    </select>
 </mapper>

@@ -44,6 +44,7 @@ public class RestaurantMenuService {
         insMenuReq.setAvailable(p.getAvailable());
         insMenuReq.setDetails(p.getDetails());
         insMenuReq.setPrice(p.getPrice());
+        insMenuReq.setMenuPic(savedPicName);
 
         int result = restaurantMenuMapper.insMenu(insMenuReq);
 

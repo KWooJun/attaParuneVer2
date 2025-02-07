@@ -46,7 +46,7 @@
         WHERE menu_id = #{menuId}
     </update>
 
-    <insert id="postCategory">
+    <insert id="postCategory" useGeneratedKeys="true" keyProperty="categoryId">
         INSERT INTO restaurant_menu_category
            SET restaurant_id = #{restaurantId}
              , category_name = #{categoryName}
@@ -71,6 +71,16 @@
         SELECT category_id AS categoryId, category_name AS categoryName
         FROM restaurant_menu_category
         WHERE restaurant_id = #{restaurantId}
+    </select>
+    
+    <select id="selMenuCategoryByRestaurantIdAndCategoryName">
+        SELECT category_id AS categoryId, restaurant_id AS restaurantId, category_name AS category_name
+        , created_at AS createdAt, updated_at AS updatedAt
+        FROM restaurant_menu_category
+        WHERE restaurant_id = #{restaurantId}
+        AND category_name = #{categoryName}
+        ORDER BY category_id ASC
+        LIMIT 1
     </select>
 
 </mapper>

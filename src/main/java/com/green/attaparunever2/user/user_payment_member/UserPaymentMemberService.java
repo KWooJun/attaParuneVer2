@@ -88,6 +88,12 @@ public class UserPaymentMemberService {
         return result;
     }
 
+    //유저 결제 멤버 확인
+    public List<SelUserPaymentMemberRes> getUserPaymentMember(long orderId) {
+        List<SelUserPaymentMemberRes> resList = userPaymentMemberMapper.selUserPaymentMember(orderId);
+        return resList;
+    }
+
     //승인 상태 확인
     public List<SelUserOrderApprovalRes> getUserOrderApprovalAccess(long orderId){
         List<SelUserOrderApprovalRes> userOrderApprovalList = userPaymentMemberMapper.selUserOrderApprovalAccess(orderId);

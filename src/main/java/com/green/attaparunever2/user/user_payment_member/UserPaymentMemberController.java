@@ -149,6 +149,18 @@ public class UserPaymentMemberController {
                 .build();
     }
 
+    @GetMapping("userPaymentMember")
+    @Operation(summary = "유저 결제 멤버 확인")
+    public ResultResponse<List<SelUserPaymentMemberRes>> getUserPaymentMember(long orderId) {
+        List<SelUserPaymentMemberRes> resList = userPaymentMemberService.getUserPaymentMember(orderId);
+
+        return ResultResponse.<List<SelUserPaymentMemberRes>>builder()
+                .statusCode("200")
+                .resultMsg("유저 결제 멤버 확인")
+                .resultData(resList)
+                .build();
+    }
+
     @GetMapping("userOrderApprovalAccess")
     @Operation(summary = "승인상태확인")
     public ResultResponse<List<SelUserOrderApprovalRes>> getUserOrderApprovalAccess(long orderId) {

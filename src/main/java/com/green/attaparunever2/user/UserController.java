@@ -137,4 +137,16 @@ public class UserController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("orderId")
+    @Operation(summary = "userId로 최신 orderId 주기")
+    public ResultResponse<Long> getSignedUserGetOrder(long userId){
+        long res = userService.getSignedUserGetOrder(userId);
+
+        return ResultResponse.<Long>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("오더 PK 받기")
+                .resultData(res)
+                .build();
+    }
 }

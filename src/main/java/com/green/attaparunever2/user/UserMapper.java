@@ -19,6 +19,6 @@ public interface UserMapper {
     List<SelUserOrderPastCheckRes> selUserPastOrderCheck(SelUserOrderPastCheckReq p);
     GetUserOrderVer2Res getUserOrderVer2(GetUserOrderVer2Req p);
     List<GetUserOrderMenuListDto> getUserOrderVer2MenuList(GetUserOrderVer2Req p);
-
+    long getSignedUserGetOrder(long userId);
     int patchUpw(UserUpwPatchReq p);
 }

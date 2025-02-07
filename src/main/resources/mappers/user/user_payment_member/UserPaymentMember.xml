@@ -140,7 +140,7 @@
     </update>
 
     <select id="sumMenuPrice">
-        SELECT SUM(B.price * B.menu_count) AS MenuPrice
+        SELECT IFNULL(SUM(B.price * B.menu_count), 0) AS MenuPrice
         FROM `order` A
         INNER JOIN order_detail B
         ON A.order_id = B.order_id

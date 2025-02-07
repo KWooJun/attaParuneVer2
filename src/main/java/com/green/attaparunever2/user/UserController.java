@@ -137,4 +137,15 @@ public class UserController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("alert")
+    @Operation(summary = "메인 페이지 사용자 알람 데이터")
+    public ResultResponse<List<UserAlertDto>> getUserAlert(@Valid @RequestParam long userId) {
+        List<UserAlertDto> res = userService.getUserAlert(userId);
+        return ResultResponse.<List<UserAlertDto>>builder()
+                .statusCode("200")
+                .resultMsg("알람 조회가 완료되었습니다.")
+                .resultData(res)
+                .build();
+    }
 }

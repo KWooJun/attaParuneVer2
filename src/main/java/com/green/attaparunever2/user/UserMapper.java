@@ -21,4 +21,7 @@ public interface UserMapper {
     List<GetUserOrderMenuListDto> getUserOrderVer2MenuList(GetUserOrderVer2Req p);
 
     int patchUpw(UserUpwPatchReq p);
+
+    List<UserAlertDto> selUserReservationAlertByUserId(long userId);
+    List<UserAlertDto> selUserPaymentAlertByUserId(long userId);
 }

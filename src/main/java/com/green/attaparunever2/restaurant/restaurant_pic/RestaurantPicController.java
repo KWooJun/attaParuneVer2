@@ -20,7 +20,7 @@ public class RestaurantPicController {
     private final RestaurantPicService restaurantPicService;
 
     @PostMapping("restaurant")
-    @Operation(summary = "식당 메뉴 사진 등록")
+    @Operation(summary = "식당 사진 등록")
     public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> filePath, @RequestParam long restaurantId) {
         InsRestaurantRes res = restaurantPicService.postRestaurantPic(filePath, restaurantId);
 

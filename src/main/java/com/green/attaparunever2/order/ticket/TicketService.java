@@ -93,4 +93,10 @@ public class TicketService {
 
         return result;
     }
+
+    public long getTicketOne(long userId){
+        long result = ticketMapper.selTicketOne(userId);
+
+        return result;
+    }
 }

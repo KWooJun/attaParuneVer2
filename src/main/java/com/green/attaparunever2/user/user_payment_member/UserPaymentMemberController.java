@@ -175,7 +175,7 @@ public class UserPaymentMemberController {
 
     @PostMapping("insTicket")
     @Operation(summary = "티켓생성")
-    public ResultResponse<Long> postTicket(PostTicketReq p){
+    public ResultResponse<Long> postTicket(@RequestBody PostTicketReq p){
         userPaymentMemberService.postTicket(p);
 
         return ResultResponse.<Long>builder()

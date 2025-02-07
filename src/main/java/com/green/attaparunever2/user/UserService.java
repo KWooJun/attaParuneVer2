@@ -221,13 +221,10 @@ public class UserService {
         return result;
     }
 
-    // 사용자 메인 페이지 알림
-    public List<UserAlertDto> getUserAlert(long userId) {
-        List<UserAlertDto> reservationList = userMapper.selUserReservationAlertByUserId(userId);
-        List<UserAlertDto> paymentList = userMapper.selUserPaymentAlertByUserId(userId);
+    public long getSignedUserGetOrder(long userId){
+        long result = userMapper.getSignedUserGetOrder(userId);
 
-        reservationList.addAll(paymentList);
-
-        return reservationList;
+        return result;
     }
+
 }

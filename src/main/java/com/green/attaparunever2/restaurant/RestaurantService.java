@@ -33,12 +33,13 @@ public class RestaurantService {
     private final RestaurantMenuMapper restaurantMenuMapper;
     private final MyFileUtils myFileUtils;
 
-    public int postRestaurant(InsRestaurantReq p){
+    public long postRestaurant(InsRestaurantReq p){
         int result = restaurantMapper.insRestaurant(p);
+
         if (result == 0) {
             throw new CustomException("식당 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
-        return result;
+        return p.getRestaurantId();
     }
 
     public SelRestaurantRes getRestaurant(SelRestaurantReq p){

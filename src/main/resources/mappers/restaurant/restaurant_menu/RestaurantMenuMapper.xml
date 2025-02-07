@@ -39,7 +39,7 @@
             <if test=" categoryId != null and categoryId != '' ">
                 , category_id = #{categoryId}
             </if>
-            <if test=" available != null and available != '' ">
+            <if test=" available != null ">
                 , available = #{available}
             </if>
         </set>

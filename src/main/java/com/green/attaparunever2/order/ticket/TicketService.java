@@ -1,9 +1,6 @@
 package com.green.attaparunever2.order.ticket;
 
 import com.green.attaparunever2.common.excprion.CustomException;
-import com.green.attaparunever2.order.OrderMapper;
-import com.green.attaparunever2.order.model.OrderDto;
-import com.green.attaparunever2.order.model.OrderGetReq;
 import com.green.attaparunever2.order.ticket.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

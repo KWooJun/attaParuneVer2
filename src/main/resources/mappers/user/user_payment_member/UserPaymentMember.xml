@@ -156,4 +156,12 @@
         ), NOW()), INTERVAL 2 HOUR);
     </insert>
 
+    <select id="selUserPaymentMember">
+        SELECT B.name, B.uid, A.approval_status AS approvalStatus, A.`point`, A.user_id AS userId
+        FROM user_payment_member A
+        INNER JOIN user B
+        ON A.user_id = B.user_id
+        WHERE A.order_id = #{orderId};
+    </select>
+
 </mapper>

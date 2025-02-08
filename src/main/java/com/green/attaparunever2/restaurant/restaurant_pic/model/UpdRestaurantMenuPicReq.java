@@ -11,6 +11,8 @@ import java.util.List;
 @Setter
 public class UpdRestaurantMenuPicReq {
     private long menuId;
+    @JsonIgnore
     private String menuPic;
+    @JsonIgnore
     private String picName;
 }

@@ -1,6 +1,10 @@
 package com.green.attaparunever2.user;
 
+import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
+import com.green.attaparunever2.admin.model.AdminSignInRes;
+import com.green.attaparunever2.admin.model.AdminUpwPatchReq;
 import com.green.attaparunever2.common.DateTimeUtils;
+import com.green.attaparunever2.common.PasswordGenerator;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.CookieUtils;
 import com.green.attaparunever2.config.constant.JwtConst;
@@ -204,6 +208,7 @@ public class UserService {
     }
 
     // 비밀번호 변경
+    @Transactional
     public int patchUpw(UserUpwPatchReq p) {
         p.setUserId(authenticationFacade.getSignedUserId());
 
@@ -235,6 +240,40 @@ public class UserService {
         reservationList.addAll(paymentList);
 
         return reservationList;
+    }
+
+    // 비밀번호 찾기
+    @Transactional
+    public int findPassword(UserFindPasswordReq p) {
+        // 관리자 aid, 이메일 일치여부 확인
+        UserSignInRes userData = userMapper.selUserByUid(p.getUid());
+        int result = 0;
+
+        if(userData != null && userData.getEmail().equals(p.getEmail())) {
+            // 일치한다면 렌덤한 문자열을 생성후  DB에 저장
+            String newPassword = PasswordGenerator.generateRandomPassword(8);
+
+            // 비밀번호 암호화
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+            UserUpwPatchReq patchReq = new UserUpwPatchReq();
+
+            patchReq.setNewUpw(hashedPassword);
+            patchReq.setUserId(userData.getUserId());
+
+            result = userMapper.patchUpw(patchReq);
+
+            if(result == 0) {
+                throw new CustomException("비밀번호 변경에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+            } else {
+                // 변경된 비밀번호 이메일 전송
+                mailSendService.sendFindPasswordMail(userData.getEmail(), newPassword);
+            }
+        } else {
+            throw new CustomException("아이디 혹은 이메일이 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        return result;
     }
 
 }

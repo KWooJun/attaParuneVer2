@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
@@ -19,6 +20,23 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     public WebMvcConfiguration(@Value("${file.directory}") String uploadPath) {this.uploadPath = uploadPath;}
 
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // "/" 경로로 들어오는 요청을 /index.html로 포워딩
+        registry.addViewController("/").setViewName("forward:/index.html");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/pic/**")
+                .addResourceLocations("file:" + uploadPath + "/");
+
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(true);
+    }
+
+    /*
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/pic/**")
@@ -40,7 +58,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         return new ClassPathResource("/static/index.html");
                     }
                 });
-    }
+    }*/
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

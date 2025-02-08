@@ -42,7 +42,8 @@ public class SecurityConfiguration {
                                         , "/api/user/find-id"
                                         , "/api/user/sign-up"
                                         , "api/user/find-passowrd"
-                                        , "/api/user/company/status").permitAll() // 인증 없이 접근 허용
+                                        , "/api/user/company/status"
+                                        ,"/index.html", "/static/**", "/assets/**", "/css/**", "/js/**").permitAll() // 인증 없이 접근 허용
                                 .requestMatchers("/api/user/**", "/api/restaurant/**").hasAnyRole("USER", "RESTAURANT")
                                 .requestMatchers("/api/admin/**").hasRole("RESTAURANT")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

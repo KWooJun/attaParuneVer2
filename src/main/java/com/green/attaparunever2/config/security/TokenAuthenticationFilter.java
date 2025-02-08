@@ -24,6 +24,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // 정적 리소스는 필터를 건너뛰도록
+        String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/static") || requestURI.endsWith(".html") || requestURI.endsWith(".css") || requestURI.endsWith(".js")) {
+            filterChain.doFilter(request, response); // 정적 리소스는 필터링하지 않고 바로 넘어감
+            return;
+        }
+
         log.info("ip Address: {}", request.getRemoteAddr());
         String authorizeationHeader = request.getHeader(jwtConst.getHeaderKey()); // Bearer 토큰값
         log.info("authorizeationHeader: {}", authorizeationHeader);

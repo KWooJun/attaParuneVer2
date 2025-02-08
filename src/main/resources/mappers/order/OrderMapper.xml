@@ -98,7 +98,7 @@
     <!-- 식당페이지 메인 예약 완료 주문 목록 조회 -->
     <select id="selCompleteOrderListByRestaurantId">
         SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, A.user_id AS userId, D.name AS userName, B.reservation_id AS reservationId
-        , reservation_time AS reservationTime, reservation_people_count AS reservationPeopleCount, user_phone AS userPhone
+        , IFNULL(reservation_time, A.created_at) AS reservationTime, reservation_people_count AS reservationPeopleCount, user_phone AS userPhone
         FROM `order` A LEFT JOIN reservation B
         ON A.order_id = B.order_id
         INNER JOIN ticket C

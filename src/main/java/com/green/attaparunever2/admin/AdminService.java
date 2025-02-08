@@ -193,6 +193,7 @@ public class AdminService {
     }
 
     // 비밀번호 변경
+    @Transactional
     public int patchUpw(AdminUpwPatchReq p) {
         p.setAdminId(authenticationFacade.getSignedUserId());
 
@@ -208,12 +209,13 @@ public class AdminService {
     }
 
     // 비밀번호 찾기
+    @Transactional
     public int findPassword(AdminFindPasswordReq p) {
         // 관리자 aid, 이메일 일치여부 확인
         AdminSignInRes adminData = adminMapper.selAdminByAid(p.getAid());
         int result = 0;
 
-        if(adminData.getEmail().equals(p.getEmail())) {
+        if(adminData != null && adminData.getEmail().equals(p.getEmail())) {
             // 일치한다면 렌덤한 문자열을 생성후  DB에 저장
             String newPassword = PasswordGenerator.generateRandomPassword(8);
 

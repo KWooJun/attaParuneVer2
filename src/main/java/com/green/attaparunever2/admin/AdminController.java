@@ -109,7 +109,7 @@ public class AdminController {
 
     @PutMapping("/find-passowrd")
     @Operation(summary = "비밀번호 찾기")
-    public ResultResponse<Integer> findPassword(@Valid @ModelAttribute AdminFindPasswordReq p) {
+    public ResultResponse<Integer> findPassword(@Valid @RequestBody AdminFindPasswordReq p) {
         int result = adminService.findPassword(p);
         return ResultResponse.<Integer>builder()
                 .statusCode("200")

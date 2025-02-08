@@ -1,5 +1,6 @@
 package com.green.attaparunever2.user;
 
+import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.user.model.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -158,6 +159,16 @@ public class UserController {
                 .statusCode("200")
                 .resultMsg("알람 조회가 완료되었습니다.")
                 .resultData(res)
+                .build();
+    }
+    @PutMapping("/find-passowrd")
+    @Operation(summary = "비밀번호 찾기")
+    public ResultResponse<Integer> findPassword(@Valid @RequestBody UserFindPasswordReq p) {
+        int result = userService.findPassword(p);
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("비밀번호 찾기가 완료 되었습니다.")
+                .resultData(result)
                 .build();
     }
 }

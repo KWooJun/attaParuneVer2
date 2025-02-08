@@ -106,4 +106,15 @@ public class AdminController {
                 .resultData(result)
                 .build();
     }
+
+    @PutMapping("/find-passowrd")
+    @Operation(summary = "비밀번호 찾기")
+    public ResultResponse<Integer> findPassword(@Valid @ModelAttribute AdminFindPasswordReq p) {
+        int result = adminService.findPassword(p);
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("비밀번호 찾기가 완료 되었습니다.")
+                .resultData(result)
+                .build();
+    }
 }

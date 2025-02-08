@@ -92,4 +92,34 @@ public class MailSendService {
             return false;
         }
     }
+
+    //인증메일 보내기(사용자)
+    public boolean sendFindPasswordMail(String email, String password) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setFrom("jumoney1012@gmail.com");
+            helper.setTo(email);
+            helper.setSubject("아따 빠르네 비밀번호 찾기 메일 입니다.");
+            helper.setText(new StringBuffer()
+                    .append("<div>")
+                    .append("<h1>[비밀번호 찾기]</h1>")
+                    .append("<p>요청하신 비밀번호는 </p>")
+                    .append("<h3>")
+                    .append(password)
+                    .append("</h3>")
+                    .append("<p>입니다.</p>")
+                    .append("</div>")
+                    .append("<div class='footer'>")
+                    .append("<p>감사합니다.<br>관리자 드림</p>")
+                    .append("</div>")
+                    .toString(), true);
+            mailSender.send(mimeMessage);
+            return true;
+        } catch (MessagingException e) {
+            // 로깅 처리 추가 (개선)
+            log.error("이메일 전송 실패: " + e.getMessage());
+            return false;
+        }
+    }
 }

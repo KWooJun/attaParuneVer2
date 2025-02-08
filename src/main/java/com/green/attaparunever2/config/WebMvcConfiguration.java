@@ -21,23 +21,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public WebMvcConfiguration(@Value("${file.directory}") String uploadPath) {this.uploadPath = uploadPath;}
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // "/" 경로로 들어오는 요청을 /index.html로 포워딩
-        registry.addViewController("/").setViewName("forward:/index.html");
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/pic/**")
-                .addResourceLocations("file:" + uploadPath + "/");
-
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/")
-                .resourceChain(true);
-    }
-
-    /*
-    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/pic/**")
                 .addResourceLocations("file:" + uploadPath + "/");
@@ -58,7 +41,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         return new ClassPathResource("/static/index.html");
                     }
                 });
-    }*/
+    }
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

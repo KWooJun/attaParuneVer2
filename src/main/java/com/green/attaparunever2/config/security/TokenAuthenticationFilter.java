@@ -24,10 +24,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 정적 리소스는 필터를 건너뛰도록
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/static") || requestURI.endsWith(".html") || requestURI.endsWith(".css") || requestURI.endsWith(".js")) {
-            filterChain.doFilter(request, response); // 정적 리소스는 필터링하지 않고 바로 넘어감
+
+        log.info("Request URI: {}", requestURI);;
+        // 정적 리소스 예외 처리 (Spring Boot의 기본 정적 리소스 매핑 경로 반영)
+        if (requestURI.startsWith("/css/") || requestURI.startsWith("/js/") || requestURI.startsWith("/images/") ||
+                requestURI.equals("/index.html") || requestURI.equals("/")) {
+            filterChain.doFilter(request, response);
+            log.info("들어옴");
             return;
         }
 

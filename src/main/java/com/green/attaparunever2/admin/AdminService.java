@@ -222,7 +222,7 @@ public class AdminService {
 
             AdminUpwPatchReq patchReq = new AdminUpwPatchReq();
 
-            patchReq.setNewUpw(newPassword);
+            patchReq.setNewUpw(hashedPassword);
             patchReq.setAdminId(adminData.getAdminId());
 
             result = adminMapper.patchUpw(patchReq);

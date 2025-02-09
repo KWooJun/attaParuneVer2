@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SelUserOrderPastCheckRes {
+    private long restaurantId;
     @Schema(description = "레스토랑 이름")
     private String restaurantName;
     @Schema(description = "레스토랑 사진")
@@ -21,4 +22,5 @@ public class SelUserOrderPastCheckRes {
     private int menuTotalCount;
     @Schema(description = "예약한 일자")
     private String createdAt;
+    private Long ticketId;
 }

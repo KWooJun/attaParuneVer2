@@ -37,6 +37,8 @@ public class SelRestaurantRes {
     private int maxCapacity;
     @Schema(title = "생성 시간")
     private String createdAt;
+    private double lat;
+    private double lng;
     @Schema(title = "식당 사진 리스트")
     private RestaurantPicSel restaurantPics;
     @Schema(title = "메뉴 카테고리 리스트")

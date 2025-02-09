@@ -78,6 +78,9 @@ public class AdminService {
             // 인증번호 이메일 전송
             mailSendService.sendAuthMail("/admin/auth-token?adminId=", req.getEmail(), req.getAdminId(), adminMailVerificationDTO.getToken());
         }*/
+
+        // 관리자 식당등록 링크 이메일 전송(나중에 삭제할 예정 인증시에 보내야 함)
+        mailSendService.sendAddStoreMail(req.getEmail(), req.getAdminId());
         
         return result;
     }
@@ -123,6 +126,11 @@ public class AdminService {
                 }
             }
         }
+
+        AdminGetRes adminRes = adminMapper.selAdminByAdminId(p.getAdminId());
+
+        // 관리자 식당등록 링크 이메일 전송
+        mailSendService.sendAddStoreMail(adminRes.getEmail(), adminRes.getAdminId());
 
         return adminMapper.delAdminEmailVerification(p.getAdminId());
     }

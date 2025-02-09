@@ -8,6 +8,11 @@ import com.green.attaparunever2.order.ticket.TicketMapper;
 import com.green.attaparunever2.order.ticket.model.TicketSelDto;
 import com.green.attaparunever2.reservation.ReservationMapper;
 import com.green.attaparunever2.reservation.model.ReservationDto;
+import com.green.attaparunever2.user.UserMapper;
+import com.green.attaparunever2.user.model.TicketMakeMessageRes;
+import com.green.attaparunever2.user.model.UserDTO;
+import com.green.attaparunever2.user.model.UserGetReq;
+import com.green.attaparunever2.user.model.UserGetRes;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import com.green.attaparunever2.user.user_payment_member.scheduler.TicketScheduler;
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
@@ -32,6 +37,7 @@ public class UserPaymentMemberService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserPaymentMemberScheduler userPaymentMemberScheduler;
     private final OrderMapper orderMapper;
+    private final UserMapper userMapper;
     private final TicketMapper ticketMapper;
     private final ReservationMapper reservationMapper;
     private final TicketScheduler ticketScheduler;
@@ -50,7 +56,7 @@ public class UserPaymentMemberService {
         return point;
     }
 
-    //결제 등록
+    //결제 등록(미사용 하는 메소드!!!!!!!!!!1)
     @Transactional
     public int postPayment(UserPostPaymentReq p) {
         int result = 0;
@@ -76,6 +82,34 @@ public class UserPaymentMemberService {
             {
                 p.setPoint(price);
                 result = userPaymentMemberMapper.insertPaymentMember(p);
+
+                // 사용자에게 결재요청 메세지 보냄
+                OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
+                List<UserPaymentMemberDto> userPaymentMemberDtoList = userPaymentMemberMapper.selUserPaymentMemberByOrderId(p.getOrderId());
+                UserGetReq userGetReq = new UserGetReq();
+                userGetReq.setUserId(p.getUserId());
+
+                UserGetRes user = userMapper.selUserByUserId(p.getUserId());
+                UserPostPaymentMessageRes messageRes = new UserPostPaymentMessageRes();
+
+                messageRes.setTypeMessage("결재 요청");
+                messageRes.setPoint(p.getPoint());
+                messageRes.setOrderUserName(user.getName());
+                messageRes.setOrderUserId(orderSelDto.getUserId());
+                messageRes.setOrderId(p.getOrderId());
+                messageRes.setUserId(p.getUserId());
+
+                if(orderSelDto.getUserId() != p.getUserId()) {
+                    // 유저 구독 경로로 예약 알림 메시지 전송
+                    messagingTemplate.convertAndSend(
+                            "/queue/user/" + p.getUserId() + "/user/userPaymentMember",
+                            messageRes
+                    );
+
+                    // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
+                    //userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+                }
+
             } else {
                 int amount = price - userPointInfo.getPoint();
                 String msg = "결제금액이("+amount+"원) 부족합니다.";
@@ -134,25 +168,37 @@ public class UserPaymentMemberService {
 
         int result = userPaymentMemberMapper.insTicket(p);
 
-        OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
+        if(result > 0) {
+            OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
 
-        // 사장님 구독 경로로 식권생성 완료 메세지 전송
-        messagingTemplate.convertAndSend(
-                "/queue/restaurant/" + orderSelDto.getRestaurantId() + "/owner/reservation",
-                p
-        );
-        
-        TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
-        ReservationDto reservationDto = reservationMapper.selReservationByOrderId(p.getOrderId());
-        LocalDateTime time = ticketDto.getCreatedAt();
-        
-        // 예약이 존재하는 경우 예약시간으로
-        if(reservationDto != null) {
-            time = reservationDto.getReservationTime();
+            // 사장님 구독 경로로 식권생성 완료 메세지 전송
+            TicketMakeMessageRes ticketMakeMessageRes = new TicketMakeMessageRes();
+
+            ticketMakeMessageRes.setTypeMessage("주문에 대한 식권 생성됨(즉 예약 완료됨)");
+            ticketMakeMessageRes.setOrderId(orderSelDto.getOrderId());
+            ticketMakeMessageRes.setUserId(orderSelDto.getUserId());
+            ticketMakeMessageRes.setCreatedAt(orderSelDto.getCreatedAt());
+            ticketMakeMessageRes.setRestaurantId(orderSelDto.getRestaurantId());
+            ticketMakeMessageRes.setReservationYn(orderSelDto.getReservationYn());
+            ticketMakeMessageRes.setReservationStatus(orderSelDto.getReservationStatus());
+
+            messagingTemplate.convertAndSend(
+                    "/queue/restaurant/" + orderSelDto.getRestaurantId() + "/owner/reservation",
+                    ticketMakeMessageRes
+            );
+
+            TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
+            ReservationDto reservationDto = reservationMapper.selReservationByOrderId(p.getOrderId());
+            LocalDateTime time = ticketDto.getCreatedAt();
+
+            // 예약이 존재하는 경우 예약시간으로
+            if(reservationDto != null) {
+                time = reservationDto.getReservationTime();
+            }
+
+            // 식권생성 후 2 시간 후 결재 처리
+            ticketScheduler.scheduleCancellation(p.getOrderId(), time);
         }
-
-        // 식권생성 후 2 시간 후 결재 처리
-        ticketScheduler.scheduleCancellation(p.getOrderId(), time);
 
         return p.getTicketId();
     }
@@ -180,9 +226,35 @@ public class UserPaymentMemberService {
         return memberList;
     }
 
-
+    @Transactional
     public int updPaymentAmount(UserPaymentAmountPatchReq p) {
-        return userPaymentMemberMapper.updPaymentAmount(p);
+        int result = userPaymentMemberMapper.updPaymentAmount(p);
+        if(result > 0) {
+            OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
+
+            UserGetRes user = userMapper.selUserByUserId(orderSelDto.getUserId());
+            UserPostPaymentMessageRes messageRes = new UserPostPaymentMessageRes();
+
+            messageRes.setTypeMessage("결재 요청");
+            messageRes.setPoint(p.getPoint());
+            messageRes.setOrderUserName(user.getName());
+            messageRes.setOrderUserId(orderSelDto.getUserId());
+            messageRes.setOrderId(p.getOrderId());
+            messageRes.setUserId(p.getUserId());
+
+            if(orderSelDto.getUserId() != p.getUserId()) {
+                // 유저 구독 경로로 예약 알림 메시지 전송
+                messagingTemplate.convertAndSend(
+                        "/queue/user/" + p.getUserId() + "/user/userPaymentMember",
+                        messageRes
+                );
+
+                // 요청 5분 뒤 업데이트 안할 시 거절 처리할 스케줄러 실행
+                //userPaymentMemberScheduler.scheduleCancellation(user.getOrderId(), user.getUserId());
+            }
+        }
+
+        return result;
     }
 
     public int deletePaymentMember(UserPaymentMemberDelReq p) {
@@ -272,6 +344,16 @@ public class UserPaymentMemberService {
             for(UserPaymentMemberDto user : userPaymentMemberDtoList) {
                 if(orderSelDto.getUserId() != user.getUserId()) {
                     // 유저 구독 경로로 예약 알림 메시지 전송
+                    UserGetRes selUser = userMapper.selUserByUserId(orderSelDto.getUserId());
+                    UserPostPaymentMessageRes messageRes = new UserPostPaymentMessageRes();
+
+                    messageRes.setTypeMessage("결재 요청");
+                    messageRes.setPoint(user.getPoint());
+                    messageRes.setOrderUserName(selUser.getName());
+                    messageRes.setOrderUserId(orderSelDto.getUserId());
+                    messageRes.setOrderId(req.getOrderId());
+                    messageRes.setUserId(user.getUserId());
+
                     messagingTemplate.convertAndSend(
                             "/queue/user/" + user.getUserId() + "/user/userPaymentMember",
                             req

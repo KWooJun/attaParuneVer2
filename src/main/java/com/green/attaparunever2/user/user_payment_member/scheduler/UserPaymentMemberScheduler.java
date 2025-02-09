@@ -64,11 +64,12 @@ public class UserPaymentMemberScheduler {
                 int result = userPaymentMemberMapper.patchPaymentMember(p);
 
                 if (result == 1) {
+                    /*
                     // 사용자에게 예약 데이터 전송
                     messagingTemplate.convertAndSend(
                             "/queue/user/"+ p.getUserId() +"/user/userPaymentMember",
                             p
-                    );
+                    );*/
                 }
             }
         }

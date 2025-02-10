@@ -46,6 +46,7 @@
         SELECT restaurant_id
         FROM restaurant
         WHERE admin_id = A.admin_id
+        LIMIT 1
         ) AS restaurantId
         FROM admin A
         WHERE aid = #{id}
@@ -57,6 +58,7 @@
         SELECT restaurant_id
         FROM restaurant
         WHERE admin_id = #{adminId}
+        LIMIT 1
         ) AS restaurantId
         FROM admin
         WHERE admin_id = #{adminId}

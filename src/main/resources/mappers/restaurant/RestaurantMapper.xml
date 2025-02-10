@@ -227,8 +227,8 @@
         )
         SELECT
         dr.report_date AS date,
-        COALESCE(COUNT(CASE WHEN o.reservation_yn = 0 THEN 1 END), 0) AS reservationOrders,
-        COALESCE(COUNT(CASE WHEN o.reservation_yn = 1 THEN 1 END), 0) AS seatedOrders
+        COALESCE(COUNT(CASE WHEN o.reservation_yn = 0 THEN 1 END), 0) AS seatedOrders,
+        COALESCE(COUNT(CASE WHEN o.reservation_yn = 1 THEN 1 END), 0) AS reservationOrders
         FROM DateRange dr
         LEFT JOIN `order` o
         ON DATE(o.created_at) = dr.report_date

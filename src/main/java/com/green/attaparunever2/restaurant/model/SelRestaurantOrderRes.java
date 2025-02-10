@@ -1,8 +1,11 @@
 package com.green.attaparunever2.restaurant.model;
 
+import com.green.attaparunever2.order.model.OrderDetailDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,4 +18,5 @@ public class SelRestaurantOrderRes {
     private int reservationYn;
     private String reservationYnStr;
     private long restaurantId;
+    private List<OrderDetailDto> orderDetails;
 }

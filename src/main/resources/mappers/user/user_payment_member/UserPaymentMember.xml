@@ -35,7 +35,7 @@
         SET point = #{point}
         WHERE order_id = #{orderId}
         AND user_id = #{userId}
-        AND approval_status = 1
+        AND approval_status = 0
     </update>
 
     <delete id="deletePaymentMember">

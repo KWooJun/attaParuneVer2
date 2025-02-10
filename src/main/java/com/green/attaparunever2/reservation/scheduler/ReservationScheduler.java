@@ -1,9 +1,12 @@
 package com.green.attaparunever2.reservation.scheduler;
 
 import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.model.OrderAccessMessageRes;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
 import com.green.attaparunever2.reservation.ReservationMapper;
 import com.green.attaparunever2.reservation.model.ReservationDto;
+import com.green.attaparunever2.reservation.model.ReservationMessageRes;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -58,12 +61,18 @@ public class ReservationScheduler {
                 int result = orderMapper.updOrderAccess(p);
 
                 if (result == 1) {
-                    reservationDto.setReservationStatus(p.getReservationStatus());
+                    // 사장님 구독 경로로 예약 알림 메시지 전송
+                    OrderAccessMessageRes orderAccessMessageRes = new OrderAccessMessageRes();
+
+                    orderAccessMessageRes.setOrderId(p.getOrderId());
+                    orderAccessMessageRes.setCreatedAt(p.getCreatedAt());
+                    orderAccessMessageRes.setReservationStatus(p.getReservationStatus());
+                    orderAccessMessageRes.setTypeMessage("식당에서의 예약 승인, 거부 여부");
 
                     // 사용자에게 예약 데이터 전송
                     messagingTemplate.convertAndSend(
                             "/queue/reservation/" + reservationDto.getOrderId() + "/user/reservation",
-                            reservationDto
+                            orderAccessMessageRes
                     );
                 }
             }

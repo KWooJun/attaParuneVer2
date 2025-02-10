@@ -39,9 +39,14 @@ public class OrderService {
 
     public int updOrderAccess(OrderAccessPatchReq p) {
         // 사용자에게 예약결과 알림 설정
+        OrderAccessMessageRes res = new OrderAccessMessageRes();
+        res.setOrderId(p.getOrderId());
+        res.setCreatedAt(p.getCreatedAt());
+        res.setReservationStatus(p.getReservationStatus());
+        res.setTypeMessage("식당에서의 예약 승인, 거부 여부");
         messagingTemplate.convertAndSend(
                 "/queue/reservation/" + p.getOrderId() + "/user/reservation",
-                p
+                res
         );
 
         return mapper.updOrderAccess(p);
@@ -78,6 +83,4 @@ public class OrderService {
 
         return orderList;
     }
-
-
 }

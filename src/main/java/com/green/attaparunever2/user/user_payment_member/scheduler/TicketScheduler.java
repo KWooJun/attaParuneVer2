@@ -57,10 +57,11 @@ public class TicketScheduler {
 
     // 2시간 후에 자동으로 결재 처리 되게끔
     private void autoPayment(Long orderId) {
+        log.info("autoPayment: {}", orderId);
         OrderSelDto dto = orderMapper.selOrderByOrderId(orderId);
-
+        log.info("dto: {}", dto);
         // 2시간뒤에 조회 했을때 예약 상태가 승인 이라면
-        if(dto != null && dto.getReservationStatus() == 1) {
+        if(dto != null && ((dto.getReservationYn() == 1 && dto.getReservationStatus() == 1) || (dto.getReservationYn() == 0 && dto.getReservationStatus() != 3))) {
             TicketSelDto ticketDto = ticketMapper.selTicketByOrderId(orderId);
 
             if(ticketDto != null && ticketDto.getTicketStatus() != 1) {

@@ -197,6 +197,12 @@ public class UserService {
         return res;
     }
 
+    public List<SelUserOrderPastCheckRes> getUserActiveOrderCheck(SelUserOrderPastCheckReq p){
+        List<SelUserOrderPastCheckRes> res = userMapper.selUserActiveOrderCheck(p);
+
+        return res;
+    }
+
     public GetUserOrderVer2Res getUserOrder(GetUserOrderVer2Req p) {
         p.setSignedUserId(authenticationFacade.getSignedUserId());
         GetUserOrderVer2Res res =  userMapper.getUserOrderVer2(p);

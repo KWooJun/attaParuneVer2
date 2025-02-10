@@ -8,10 +8,7 @@ import com.green.attaparunever2.order.model.OrderDetailPostReq;
 import com.green.attaparunever2.order.model.OrderPostReq;
 import com.green.attaparunever2.order.ticket.TicketMapper;
 import com.green.attaparunever2.order.ticket.model.TicketSelDto;
-import com.green.attaparunever2.reservation.model.ReservationDto;
-import com.green.attaparunever2.reservation.model.ReservationInsDto;
-import com.green.attaparunever2.reservation.model.ReservationMenuDto;
-import com.green.attaparunever2.reservation.model.ReservationPostReq;
+import com.green.attaparunever2.reservation.model.*;
 import com.green.attaparunever2.reservation.scheduler.ReservationScheduler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -108,6 +105,16 @@ public class ReservationService {
             req.setOrderId(createdOrderId);
 
             // 사장님 구독 경로로 예약 알림 메시지 전송
+            ReservationMessageRes reservationMessageRes = new ReservationMessageRes();
+            reservationMessageRes.setOrderId(createdOrderId);
+            reservationMessageRes.setReservationPeopleCount(req.getReservationPeopleCount());
+            reservationMessageRes.setReservationTime(req.getReservationTime());
+            reservationMessageRes.setUserPhone(req.getUserPhone());
+            reservationMessageRes.setRestaurantId(req.getRestaurantId());
+            reservationMessageRes.setUserId(req.getUserId());
+            reservationMessageRes.setMenuList(req.getMenuList());
+            reservationMessageRes.setTypeMessage("예약 요청");
+
             messagingTemplate.convertAndSend(
                     "/queue/restaurant/" + req.getRestaurantId() + "/owner/reservation",
                     req

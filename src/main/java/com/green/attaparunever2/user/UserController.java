@@ -103,8 +103,21 @@ public class UserController {
         return userService.getAccessToken(req);
     }
 
+    @GetMapping("activeOrderCheck")
+    @Operation(summary = "진행중인 주문 내역 확인")
+    public ResultResponse<List<SelUserOrderPastCheckRes>> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
+        List<SelUserOrderPastCheckRes> resList = userService.getUserActiveOrderCheck(p);
+
+        return ResultResponse.<List<SelUserOrderPastCheckRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("진행 주문 내역 확인")
+                .resultData(resList)
+                .build();
+
+    }
+
     @GetMapping("pastOrderCheck")
-    @Operation(summary = "지난 결제 내역 확인")
+    @Operation(summary = "지난 주문 내역 확인")
     public ResultResponse<List<SelUserOrderPastCheckRes>> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> resList = userService.getUserPastOrderCheck(p);
 

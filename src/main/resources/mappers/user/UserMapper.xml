@@ -84,11 +84,38 @@
         WHERE user_id = #{userId}
     </delete>
 
+    <!-- 진행 주문 내역 : 신권생성이 되고 사용이 안된 -->
+    <select id="selUserActiveOrderCheck">
+        SELECT C.restaurant_name AS restaurantName, D.file_path AS filePath, A.reservation_yn AS reservationYn
+        , GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuName, SUM(E.menu_count * F.price) AS menuTotalPrice
+        , E.menu_count AS menuCount
+        , A.created_at AS createdAt
+        , A.restaurant_id AS restaurantId
+        , G.ticket_id AS ticketId
+        FROM `order` A
+        INNER JOIN restaurant C
+        ON A.restaurant_id = C.restaurant_id
+        LEFT JOIN restaurant_pic D
+        ON C.restaurant_id = D.restaurant_id
+        INNER JOIN order_detail E
+        ON A.order_id = E.order_id
+        INNER JOIN restaurant_menu F
+        ON E.menu_id = F.menu_id
+        LEFT JOIN ticket G
+        ON G.order_id = A.order_id
+        AND G.ticket_status = 0
+        WHERE A.user_id = #{userId}
+        GROUP BY A.order_id DESC
+    </select>
+
+    <!-- 지난 주문 내역 : 식권사용이 완료된 -->
     <select id="selUserPastOrderCheck">
         SELECT C.restaurant_name AS restaurantName, D.file_path AS filePath, A.reservation_yn AS reservationYn
              , GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuName, SUM(E.menu_count * F.price) AS menuTotalPrice
              , E.menu_count AS menuCount
              , A.created_at AS createdAt
+             , A.restaurant_id AS restaurantId
+            , G.ticket_id AS ticketId
           FROM `order` A
          INNER JOIN restaurant C
             ON A.restaurant_id = C.restaurant_id
@@ -98,8 +125,11 @@
             ON A.order_id = E.order_id
          INNER JOIN restaurant_menu F
             ON E.menu_id = F.menu_id
+         INNER JOIN ticket G
+            ON A.order_id = G.order_id
+            AND G.ticket_status = 1
          WHERE A.user_id = #{userId}
-         GROUP BY A.order_id;
+         GROUP BY A.order_id DESC
     </select>
 
     <select id="getUserOrderVer2">
@@ -165,7 +195,8 @@
         ORDER BY created_at DESC
         LIMIT 1
     </select>
-
+    <!-- 완료된 예약에 대한 리스트 -->
+    <!--
     <select id="selUserReservationAlertByUserId">
         SELECT A.reservation_id AS reservationId, A.reservation_time AS reservationTime
         , A.reservation_people_count AS reservationPeopleCount, B.reservation_status AS reservationStatus
@@ -180,10 +211,46 @@
         SELECT D.order_id FROM ticket D WHERE D.order_id = A.order_id
         )
     </select>
+    -->
+    <!-- 예약은 완료 되었는데 식권이 생성 안된 경우 -->
+    <select id="selUserReservationAlertByUserId">
+        SELECT A.reservation_id AS reservationId, A.reservation_time AS reservationTime
+        , A.reservation_people_count AS reservationPeopleCount, B.reservation_status AS reservationStatus
+        , B.restaurant_id AS restaurantId, C.restaurant_name AS restaurantName, B.order_id AS orderId, '인원 선택 메세지' AS message
+        FROM `order` B LEFT JOIN reservation A
+        ON B.order_id = A.order_id
+        INNER JOIN restaurant C
+        ON B.restaurant_id = C.restaurant_id
+        WHERE B.user_id = #{userId}
+        AND((B.reservation_yn = 1 AND B.reservation_status = 1) OR (B.reservation_yn = 0 AND B.reservation_status = 0))
+        AND (
+        SELECT D.order_id FROM ticket D WHERE D.order_id = B.order_id LIMIT 1
+        ) IS NULL
+    </select>
+
+    <!-- 예약은 허용 됐는데 사용자가 생성되지 않은 경우 -->
+    <!--
+    <select id="selUserReservationAlertByUserId">
+        SELECT A.reservation_id AS reservationId, A.reservation_time AS reservationTime
+        , A.reservation_people_count AS reservationPeopleCount, B.reservation_status AS reservationStatus
+        , B.restaurant_id AS restaurantId, C.restaurant_name AS restaurantName, A.order_id AS orderId
+        FROM reservation A INNER JOIN `order` B
+        ON A.order_id = B.order_id
+        INNER JOIN restaurant C
+        ON B.restaurant_id = C.restaurant_id
+        WHERE B.user_id = 16
+        AND B.reservation_status = 1
+        <![CDATA[
+        AND A.reservation_people_count <> (
+        SELECT COUNT(*) FROM user_payment_member D WHERE D.order_id = A.order_id AND D.approval_status = 1
+        )
+        ]]>
+    </select>
+    -->
 
     <select id="selUserPaymentAlertByUserId">
         SELECT B.user_id AS orderUserId, C.`name`  AS orderUserName, A.order_id AS orderId
-        , A.approval_status AS approvalStarus, A.`point`, A.created_at AS paymentCreatedAt
+        , A.approval_status AS approvalStarus, A.`point`, A.created_at AS paymentCreatedAt, '나한테 온 승인요청 메세지' AS message
         FROM user_payment_member A INNER JOIN `order` B
         ON A.order_id = B.order_id
         INNER JOIN `user` C

@@ -20,4 +20,5 @@ public class UserAlertDto {
     private Integer approvalStatus;
     private Integer point;
     private String paymentCreatedAt;
+    private String message;
 }

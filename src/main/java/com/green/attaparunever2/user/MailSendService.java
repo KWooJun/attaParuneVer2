@@ -122,4 +122,31 @@ public class MailSendService {
             return false;
         }
     }
+
+    // 관리자 가입 완료시 업장 등록 페이지 메일
+    public boolean sendAddStoreMail(String email, long adminId) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setFrom("jumoney1012@gmail.com");
+            helper.setTo(email);
+            helper.setSubject("아따 빠르네 가입을 환영합니다.");
+            helper.setText(new StringBuffer()
+                    .append("<h1>[식당 등록]</h1>")
+                    .append("<p>아래 링크를 클릭하시면 식당 등록으로 이동 합니다.</p>")
+                    .append("<a href='http://112.222.157.156:5222/addstore?adminId=" + adminId)
+                    .append("' target='_blank'>식당 등록하기</a>")
+                    .append("</div>")
+                    .append("<div class='footer'>")
+                    .append("<p>감사합니다.<br>관리자 드림</p>")
+                    .append("</div>")
+                    .toString(), true);
+            mailSender.send(mimeMessage);
+            return true;
+        } catch (MessagingException e) {
+            // 로깅 처리 추가 (개선)
+            log.error("이메일 전송 실패: " + e.getMessage());
+            return false;
+        }
+    }
 }

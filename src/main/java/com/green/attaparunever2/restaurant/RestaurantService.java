@@ -3,6 +3,8 @@ package com.green.attaparunever2.restaurant;
 
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.model.OrderDetailDto;
 import com.green.attaparunever2.restaurant.model.*;
 import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuMapper;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.MenuSelCateList;
@@ -32,6 +34,7 @@ public class RestaurantService {
     private final RestaurantPicMapper restaurantPicMapper;
     private final RestaurantMenuMapper restaurantMenuMapper;
     private final MyFileUtils myFileUtils;
+    private final OrderMapper orderMapper;
 
     public long postRestaurant(InsRestaurantReq p){
         int result = restaurantMapper.insRestaurant(p);
@@ -200,6 +203,13 @@ public class RestaurantService {
     }
 
     public List<SelRestaurantOrderRes> getRestaurantPoint(SelRestaurantOrderReq req) {
-        return restaurantMapper.selRestaurantPointByCreatedAt(req);
+        List<SelRestaurantOrderRes> orderList = restaurantMapper.selRestaurantPointByCreatedAt(req);
+
+        for(SelRestaurantOrderRes order : orderList) {
+            List<OrderDetailDto> orderDetails = orderMapper.selOrderDetailByOrderId(order.getOrderId());
+            order.setOrderDetails(orderDetails);
+        }
+
+        return orderList;
     }
 }

@@ -24,6 +24,7 @@
              , business_number AS businessNumber, operating_hours AS operatingHours
              , restaurant_description AS restaurantDescription, `status`
              , max_capacity AS maxCapacity, created_at AS createdAt
+             , lat, lng
           FROM restaurant
          WHERE restaurant_id = #{restaurantId};
     </select>
@@ -93,7 +94,7 @@
                     , operating_hours = #{operatingHours}
                 </if>
                     , restaurant_description = #{restaurantDescription}
-                <if test=" status != null and status != '' ">
+                <if test=" status != null">
                     , `status` = #{status}
                 </if>
                 <if test=" maxCapacity != null and maxCapacity != '' ">
@@ -157,7 +158,9 @@
             ON B.user_id = C.user_id
         WHERE A.ticket_status = 1
             AND B.restaurant_id = #{restaurantId}
-            AND (
+        <if test="startDate != null and endDate != null">
+            AND
+            (
                 DATE_FORMAT(A.use_date, '%Y-%m-%d')
                 <![CDATA[ >= ]]>
                 #{startDate}
@@ -165,6 +168,25 @@
                 <![CDATA[ <= ]]>
                 #{endDate}
             )
+        </if>
+
+        <if test="startDate != null and endDate == null">
+            AND
+            (
+            DATE_FORMAT(A.use_date, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            )
+        </if>
+
+        <if test="startDate == null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.use_date, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
         LIMIT #{startIdx}, #{size}
     </select>
 

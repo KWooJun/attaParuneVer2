@@ -23,7 +23,7 @@ public class UpdRestaurantReq {
     @Schema(title = "식당 설명")
     private String restaurantDescription;
     @Schema(title = "식당 상태")
-    private int status;
+    private Integer status;
     @Schema(title = "최대 수용 인원수")
     private int maxCapacity;
     @Schema(title = "위도")

@@ -32,7 +32,7 @@ public class UserPaymentMemberController {
                 .resultData(result)
                 .build();
     }
-
+    /*
     @PostMapping("postPayment")
     @Operation(summary = "결제 등록")
     public ResultResponse<Integer> postPayment(@ModelAttribute UserPostPaymentReq p) {
@@ -44,6 +44,7 @@ public class UserPaymentMemberController {
                 .resultData(result)
                 .build();
     }
+     */
 
 //    @GetMapping("getPaymentMember")
 //    @Operation(summary = "결제에 해당하는 인원을 조회한다.")

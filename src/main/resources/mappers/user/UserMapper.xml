@@ -101,7 +101,7 @@
         ON A.order_id = E.order_id
         INNER JOIN restaurant_menu F
         ON E.menu_id = F.menu_id
-        LEFT JOIN ticket G
+        INNER JOIN ticket G
         ON G.order_id = A.order_id
         AND G.ticket_status = 0
         WHERE A.user_id = #{userId}

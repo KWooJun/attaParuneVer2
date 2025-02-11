@@ -19,7 +19,7 @@ public class SelUserOrderPastCheckRes {
     @Schema(description = "메뉴 총 가격")
     private int menuTotalPrice;
     @Schema(description = "메뉴 갯수")
-    private int menuTotalCount;
+    private int menuCount;
     @Schema(description = "예약한 일자")
     private String createdAt;
     private Long ticketId;

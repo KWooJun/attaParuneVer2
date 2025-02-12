@@ -57,6 +57,7 @@
         E.reservation_people_count AS personCount,
         OD.created_at AS reservationTime,
         GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuNames
+        , G.ticket_status AS ticketStatus
         FROM `order` C
         INNER JOIN restaurant D
         ON C.restaurant_id = D.restaurant_id

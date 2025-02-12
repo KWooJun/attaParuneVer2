@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -108,6 +109,16 @@ public class RestaurantService {
             log.info("qwer : {} pic : {}", res.getRestaurantId(), res.getRestaurantArroundPicList());
         }
 
+        // 시연 용코드 (시연 후 삭제)-------------------------------------
+        Random random = new Random();
+
+        for(SelRestaurantAroundRes item : list) {
+            // 10에서 40 사이의 랜덤 정수 생성
+            int randomNumber = random.nextInt(11) + 20;  // 0부터 30까지의 값을 생성하고 10을 더함
+            item.setAvgRestaurant(randomNumber);
+        }
+        //----------------------------------------------------------------
+
         // 3. 최종적으로 수정된 식당 목록 반환
         return list;
     }
@@ -151,6 +162,17 @@ public class RestaurantService {
             RestaurantPicAroundSel picList = restaurantPicMapper.selRestaurantMainPic(item.getRestaurantId());
             item.setRestaurantAroundPicList(picList);
         }
+
+        // 시연 용코드 (시연 후 삭제)-------------------------------------
+        Random random = new Random();
+
+        for(SelRestaurantMainRes item : res) {
+            // 10에서 40 사이의 랜덤 정수 생성
+            int randomNumber = random.nextInt(11) + 20;  // 0부터 30까지의 값을 생성하고 10을 더함
+            item.setAvgRestaurant(randomNumber);
+        }
+        //----------------------------------------------------------------
+
         return res;
     }
 

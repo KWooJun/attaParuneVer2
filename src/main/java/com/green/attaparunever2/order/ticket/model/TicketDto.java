@@ -17,4 +17,5 @@ public class TicketDto {
     private int personCount;
     private String reservationTime;
     private String menuNames;
+    private int ticketStatus;
 }
